@@ -10,7 +10,7 @@
   <meta property="og:image" content="https://i.scdn.co/image/ab6761610000f1781d30e2a0c7f09cbcc17a88ab" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Big+Shoulders+Display:wght@900&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500&display=swap" rel="stylesheet" />
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -119,10 +119,10 @@
     }
 
     h1 {
-      font-family: 'Bebas Neue', sans-serif;
+      font-family: 'Big Shoulders Display', sans-serif;
       font-size: 92px;
-      font-weight: 400;
-      letter-spacing: 0.22em;
+      font-weight: 900;
+      letter-spacing: 0.02em;
       line-height: 1;
       text-transform: uppercase;
       margin-bottom: 10px;
@@ -355,9 +355,18 @@
       text-align: center;
       text-transform: uppercase;
     }
+
+    #space-bg {
+      position: fixed;
+      inset: 0;
+      z-index: -1;
+      width: 100%;
+      height: 100%;
+    }
   </style>
 </head>
 <body>
+<canvas id="space-bg"></canvas>
 <div class="page">
 
   <!-- Header -->
@@ -525,5 +534,98 @@
   </iframe>
 </div>
 
+
+<script>
+(function () {
+  const canvas = document.getElementById('space-bg');
+  const ctx = canvas.getContext('2d');
+
+  const NEBULAE = [
+    { x: 0.15, y: 0.22, rx: 0.28, ry: 0.18, color: 'rgba(90,40,8,0.18)' },
+    { x: 0.80, y: 0.55, rx: 0.22, ry: 0.26, color: 'rgba(139,58,10,0.14)' },
+    { x: 0.50, y: 0.80, rx: 0.35, ry: 0.20, color: 'rgba(217,120,32,0.07)' },
+    { x: 0.30, y: 0.60, rx: 0.20, ry: 0.16, color: 'rgba(90,40,8,0.12)' },
+  ];
+
+  let stars = [];
+  let brightStars = [];
+
+  function buildStars(w, h) {
+    stars = Array.from({ length: 300 }, () => ({
+      x: Math.random() * w,
+      y: Math.random() * h,
+      r: 0.3 + Math.random() * 1.7,
+      a: 0.2 + Math.random() * 0.8,
+    }));
+    brightStars = Array.from({ length: 15 }, () => ({
+      x: Math.random() * w,
+      y: Math.random() * h,
+      r: 1.2 + Math.random() * 1.0,
+      spike: 6 + Math.random() * 8,
+    }));
+  }
+
+  function draw() {
+    const w = canvas.width;
+    const h = canvas.height;
+
+    ctx.clearRect(0, 0, w, h);
+
+    ctx.fillStyle = '#0E0803';
+    ctx.fillRect(0, 0, w, h);
+
+    NEBULAE.forEach(n => {
+      const gx = n.x * w;
+      const gy = n.y * h;
+      const grad = ctx.createRadialGradient(gx, gy, 0, gx, gy, Math.max(n.rx * w, n.ry * h));
+      grad.addColorStop(0, n.color);
+      grad.addColorStop(1, 'rgba(0,0,0,0)');
+      ctx.save();
+      ctx.scale(1, (n.ry * h) / (n.rx * w));
+      ctx.fillStyle = grad;
+      ctx.beginPath();
+      ctx.arc(gx, gy * (n.rx * w) / (n.ry * h), n.rx * w, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.restore();
+    });
+
+    stars.forEach(s => {
+      ctx.beginPath();
+      ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
+      ctx.fillStyle = `rgba(245,232,200,${s.a})`;
+      ctx.fill();
+    });
+
+    brightStars.forEach(s => {
+      ctx.save();
+      ctx.translate(s.x, s.y);
+      ctx.fillStyle = 'rgba(245,232,200,0.9)';
+      ctx.beginPath();
+      ctx.arc(0, 0, s.r, 0, Math.PI * 2);
+      ctx.fill();
+      const sp = s.spike;
+      ctx.strokeStyle = 'rgba(245,232,200,0.5)';
+      ctx.lineWidth = 0.6;
+      ctx.beginPath(); ctx.moveTo(-sp, 0); ctx.lineTo(sp, 0); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(0, -sp); ctx.lineTo(0, sp); ctx.stroke();
+      ctx.strokeStyle = 'rgba(245,232,200,0.2)';
+      ctx.lineWidth = 0.4;
+      ctx.beginPath(); ctx.moveTo(-sp * 0.6, -sp * 0.6); ctx.lineTo(sp * 0.6, sp * 0.6); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(sp * 0.6, -sp * 0.6); ctx.lineTo(-sp * 0.6, sp * 0.6); ctx.stroke();
+      ctx.restore();
+    });
+  }
+
+  function resize() {
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+    buildStars(canvas.width, canvas.height);
+    draw();
+  }
+
+  window.addEventListener('resize', resize);
+  resize();
+})();
+</script>
 </body>
 </html>
