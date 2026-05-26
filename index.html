@@ -366,6 +366,166 @@
       height: 100%;
       pointer-events: none;
     }
+
+    /* ── Videos ──────────────────────────────── */
+    .video-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      width: 100%;
+      margin-top: 4px;
+    }
+
+    .video-thumb {
+      position: relative;
+      border-radius: 10px;
+      overflow: hidden;
+      cursor: pointer;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      transition: transform 0.18s, border-color 0.18s;
+      aspect-ratio: 16/9;
+    }
+
+    .video-thumb:hover { transform: translateY(-2px); border-color: var(--accent); }
+
+    .video-thumb img {
+      width: 100%; height: 100%;
+      object-fit: cover; display: block;
+    }
+
+    .video-thumb-overlay {
+      position: absolute; inset: 0;
+      background: rgba(0,0,0,0.32);
+      display: flex; align-items: center; justify-content: center;
+      transition: background 0.18s;
+    }
+
+    .video-thumb:hover .video-thumb-overlay { background: rgba(0,0,0,0.1); }
+
+    .play-icon {
+      width: 34px; height: 34px;
+      background: rgba(217,120,32,0.88);
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+    }
+
+    .video-title-bar {
+      position: absolute; bottom: 0; left: 0; right: 0;
+      padding: 5px 8px;
+      background: linear-gradient(transparent, rgba(0,0,0,0.78));
+      font-size: 10px; font-weight: 400; color: #fff;
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+
+    /* Video modal */
+    .video-modal {
+      display: none; position: fixed; inset: 0;
+      background: rgba(0,0,0,0.88);
+      z-index: 2000;
+      align-items: center; justify-content: center;
+      padding: 20px;
+    }
+    .video-modal.open { display: flex; }
+
+    .video-modal-inner {
+      position: relative; width: 100%; max-width: 640px; aspect-ratio: 16/9;
+    }
+
+    .video-modal iframe { width: 100%; height: 100%; border: none; border-radius: 12px; }
+
+    .video-modal-close {
+      position: absolute; top: -38px; right: 0;
+      background: none; border: none; color: #fff;
+      font-size: 26px; cursor: pointer; opacity: 0.75; line-height: 1;
+    }
+    .video-modal-close:hover { opacity: 1; }
+
+    /* ── Chatbot ──────────────────────────────── */
+    .chat-fab {
+      position: fixed; bottom: 96px; right: 20px;
+      width: 50px; height: 50px; border-radius: 50%;
+      background: var(--accent); border: none; cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      z-index: 1900;
+      box-shadow: 0 4px 18px rgba(217,120,32,0.5);
+      transition: transform 0.18s;
+    }
+    .chat-fab:hover { transform: scale(1.08); }
+
+    .chat-window {
+      display: none; position: fixed; bottom: 158px; right: 20px;
+      width: min(340px, calc(100vw - 40px)); height: 420px;
+      background: #130C04; border: 1px solid var(--border);
+      border-radius: 16px; z-index: 1900;
+      flex-direction: column; overflow: hidden;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.65);
+    }
+    .chat-window.open { display: flex; }
+
+    .chat-header {
+      padding: 13px 16px; background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      font-size: 13px; font-weight: 500;
+      display: flex; align-items: center; gap: 8px;
+    }
+    .chat-dot { width: 8px; height: 8px; border-radius: 50%; background: #4CAF50; }
+
+    .chat-messages {
+      flex: 1; overflow-y: auto; padding: 14px;
+      display: flex; flex-direction: column; gap: 10px;
+      scrollbar-width: thin; scrollbar-color: var(--border) transparent;
+    }
+
+    .chat-msg {
+      max-width: 86%; padding: 9px 13px;
+      border-radius: 12px; font-size: 13px; line-height: 1.45;
+    }
+    .chat-msg.agent {
+      background: var(--surface); border: 1px solid var(--border);
+      align-self: flex-start; border-bottom-left-radius: 4px;
+    }
+    .chat-msg.user {
+      background: var(--accent-dim); border: 1px solid rgba(217,120,32,0.3);
+      align-self: flex-end; border-bottom-right-radius: 4px;
+    }
+    .chat-msg.typing { color: var(--muted); font-style: italic; }
+
+    .chat-input-row {
+      display: flex; gap: 8px; padding: 11px;
+      border-top: 1px solid var(--border);
+    }
+
+    .chat-input {
+      flex: 1; background: var(--surface);
+      border: 1px solid var(--border); border-radius: 20px;
+      padding: 9px 14px; color: var(--text);
+      font-family: 'DM Sans', sans-serif; font-size: 13px; outline: none;
+    }
+    .chat-input::placeholder { color: var(--muted); }
+    .chat-input:focus { border-color: var(--accent); }
+
+    .chat-send {
+      width: 36px; height: 36px; border-radius: 50%;
+      background: var(--accent); border: none; cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0; align-self: flex-end;
+    }
+    .chat-send:disabled { opacity: 0.4; cursor: not-allowed; }
+
+    /* Footer booking link */
+    .footer-booking {
+      margin-top: 8px;
+      font-size: 11px;
+      color: var(--accent);
+      letter-spacing: 0.08em;
+      cursor: pointer;
+      text-transform: uppercase;
+      text-decoration: none;
+      opacity: 0.75;
+      transition: opacity 0.18s;
+    }
+    .footer-booking:hover { opacity: 1; }
   </style>
 </head>
 <body>
@@ -521,8 +681,110 @@
     </div>
   </div>
 
-  <p class="footer">SER &nbsp;&middot;&nbsp; 2025</p>
+  <!-- Videos -->
+  <div class="section">
+    <p class="section-label">Videos</p>
+    <div class="video-grid">
 
+      <div class="video-thumb" onclick="openVideo('H1OilMEB8jI','¿Qué quieres de mí?')">
+        <img src="https://img.youtube.com/vi/H1OilMEB8jI/hqdefault.jpg" alt="¿Qué quieres de mí?" loading="lazy" />
+        <div class="video-thumb-overlay">
+          <div class="play-icon">
+            <svg width="14" height="14" viewBox="0 0 12 14" fill="none"><path d="M1 1.5l10 5-10 5V1.5z" fill="white"/></svg>
+          </div>
+        </div>
+        <span class="video-title-bar">¿Qué quieres de mí?</span>
+      </div>
+
+      <div class="video-thumb" onclick="openVideo('KsdSul8P8sw','Allow me to introduce myself')">
+        <img src="https://img.youtube.com/vi/KsdSul8P8sw/hqdefault.jpg" alt="Allow me to introduce myself" loading="lazy" />
+        <div class="video-thumb-overlay">
+          <div class="play-icon">
+            <svg width="14" height="14" viewBox="0 0 12 14" fill="none"><path d="M1 1.5l10 5-10 5V1.5z" fill="white"/></svg>
+          </div>
+        </div>
+        <span class="video-title-bar">Allow me to introduce myself</span>
+      </div>
+
+      <div class="video-thumb" onclick="openVideo('5DD6dBJvIes','Intenso (Very Tiny Desk)')">
+        <img src="https://img.youtube.com/vi/5DD6dBJvIes/hqdefault.jpg" alt="Intenso (Very Tiny Desk)" loading="lazy" />
+        <div class="video-thumb-overlay">
+          <div class="play-icon">
+            <svg width="14" height="14" viewBox="0 0 12 14" fill="none"><path d="M1 1.5l10 5-10 5V1.5z" fill="white"/></svg>
+          </div>
+        </div>
+        <span class="video-title-bar">Intenso (Very Tiny Desk)</span>
+      </div>
+
+      <div class="video-thumb" onclick="openVideo('AcO7wu4aj14','Sigo ahí')">
+        <img src="https://img.youtube.com/vi/AcO7wu4aj14/hqdefault.jpg" alt="Sigo ahí" loading="lazy" />
+        <div class="video-thumb-overlay">
+          <div class="play-icon">
+            <svg width="14" height="14" viewBox="0 0 12 14" fill="none"><path d="M1 1.5l10 5-10 5V1.5z" fill="white"/></svg>
+          </div>
+        </div>
+        <span class="video-title-bar">Sigo ahí</span>
+      </div>
+
+      <div class="video-thumb" onclick="openVideo('AXwSlDRc9qc','Llévame')">
+        <img src="https://img.youtube.com/vi/AXwSlDRc9qc/hqdefault.jpg" alt="Llévame" loading="lazy" />
+        <div class="video-thumb-overlay">
+          <div class="play-icon">
+            <svg width="14" height="14" viewBox="0 0 12 14" fill="none"><path d="M1 1.5l10 5-10 5V1.5z" fill="white"/></svg>
+          </div>
+        </div>
+        <span class="video-title-bar">Llévame</span>
+      </div>
+
+      <div class="video-thumb" onclick="openVideo('fHve-fverh0','Intenso')">
+        <img src="https://img.youtube.com/vi/fHve-fverh0/hqdefault.jpg" alt="Intenso" loading="lazy" />
+        <div class="video-thumb-overlay">
+          <div class="play-icon">
+            <svg width="14" height="14" viewBox="0 0 12 14" fill="none"><path d="M1 1.5l10 5-10 5V1.5z" fill="white"/></svg>
+          </div>
+        </div>
+        <span class="video-title-bar">Intenso</span>
+      </div>
+
+    </div>
+  </div>
+
+  <p class="footer">SER</p>
+  <span class="footer-booking" onclick="openChat()">Fechas y booking &rarr; habla con el manager</span>
+
+</div>
+
+<!-- Video modal -->
+<div class="video-modal" id="videoModal" onclick="if(event.target===this)closeVideo()">
+  <div class="video-modal-inner">
+    <button class="video-modal-close" onclick="closeVideo()">&times;</button>
+    <iframe id="videoFrame" src="" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+  </div>
+</div>
+
+<!-- Chat widget -->
+<button class="chat-fab" onclick="openChat()" title="Booking & Fechas" aria-label="Abrir chat de booking">
+  <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
+    <path d="M20 2H4C2.9 2 2 2.9 2 4v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2z" fill="white"/>
+  </svg>
+</button>
+
+<div class="chat-window" id="chatWindow">
+  <div class="chat-header">
+    <span class="chat-dot"></span>
+    Manager IA &nbsp;·&nbsp; SER
+  </div>
+  <div class="chat-messages" id="chatMessages">
+    <div class="chat-msg agent">Hola! Soy el manager virtual de SER 👋 Cuéntame sobre tu evento — ¿qué tipo de fecha tienes en mente?</div>
+  </div>
+  <div class="chat-input-row">
+    <input class="chat-input" id="chatInput" type="text" placeholder="Escribe tu mensaje…" onkeydown="if(event.key==='Enter')sendChat()" />
+    <button class="chat-send" id="chatSend" onclick="sendChat()">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+        <path d="M22 2L11 13M22 2l-7 20-4-9-9-4 20-7z" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </button>
+  </div>
 </div>
 
 <!-- Sticky player -->
@@ -644,6 +906,86 @@
   window.addEventListener('resize', resize);
   resize();
 })();
+</script>
+
+<script>
+/* ── Video modal ─────────────────────────────── */
+function openVideo(id, title) {
+  document.getElementById('videoFrame').src =
+    'https://www.youtube.com/embed/' + id + '?autoplay=1&rel=0';
+  document.getElementById('videoModal').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeVideo() {
+  document.getElementById('videoFrame').src = '';
+  document.getElementById('videoModal').classList.remove('open');
+  document.body.style.overflow = '';
+}
+
+document.addEventListener('keydown', e => { if (e.key === 'Escape') { closeVideo(); closeChat(); } });
+
+/* ── Booking chatbot ─────────────────────────── */
+const chatWindow   = document.getElementById('chatWindow');
+const chatMessages = document.getElementById('chatMessages');
+const chatInput    = document.getElementById('chatInput');
+const chatSend     = document.getElementById('chatSend');
+
+let chatHistory = [];
+
+function openChat() {
+  chatWindow.classList.add('open');
+  chatInput.focus();
+}
+
+function closeChat() {
+  chatWindow.classList.remove('open');
+}
+
+function addMsg(text, role) {
+  const div = document.createElement('div');
+  div.className = 'chat-msg ' + role;
+  div.textContent = text;
+  chatMessages.appendChild(div);
+  chatMessages.scrollTop = chatMessages.scrollHeight;
+  return div;
+}
+
+async function sendChat() {
+  const text = chatInput.value.trim();
+  if (!text) return;
+
+  chatInput.value = '';
+  chatSend.disabled = true;
+  addMsg(text, 'user');
+
+  chatHistory.push({ role: 'user', content: text });
+
+  const typing = addMsg('Escribiendo…', 'agent typing');
+
+  try {
+    const res = await fetch('/api/chat', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ messages: chatHistory })
+    });
+
+    if (!res.ok) throw new Error('Error ' + res.status);
+    const data = await res.json();
+    const reply = data.reply || '¡Recibido! Me pongo en contacto contigo.';
+
+    typing.remove();
+    addMsg(reply, 'agent');
+    chatHistory.push({ role: 'assistant', content: reply });
+
+  } catch (err) {
+    typing.remove();
+    addMsg('Ups, algo falló. Escríbeme directamente a través de Instagram o contacta por email.', 'agent');
+  }
+
+  chatSend.disabled = false;
+  chatInput.focus();
+}
 </script>
 </body>
 </html>
