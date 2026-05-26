@@ -348,6 +348,74 @@
       margin-top: 2px;
     }
 
+    /* ── Photos carousel ────────────────────────── */
+    .photo-carousel {
+      width: 100vw;
+      margin-left: calc(-50vw + 50%);
+      overflow-x: auto;
+      overflow-y: hidden;
+      display: flex;
+      gap: 10px;
+      padding: 4px 20px 12px;
+      scroll-snap-type: x mandatory;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: none;
+    }
+    .photo-carousel::-webkit-scrollbar { display: none; }
+
+    .photo-slide {
+      flex-shrink: 0;
+      width: 82vw;
+      max-width: 360px;
+      scroll-snap-align: center;
+      border-radius: 10px;
+      overflow: hidden;
+      border: 1px solid var(--border);
+      cursor: pointer;
+      transition: border-color 0.18s, transform 0.18s;
+    }
+    .photo-slide:hover { border-color: rgba(217,120,32,0.45); transform: translateY(-2px); }
+
+    .photo-slide img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      aspect-ratio: 4/3;
+    }
+
+    /* Lightbox */
+    .photo-lb {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.93);
+      z-index: 2100;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+    }
+    .photo-lb.open { display: flex; }
+    .photo-lb img {
+      max-width: 100%;
+      max-height: 90vh;
+      border-radius: 8px;
+      object-fit: contain;
+    }
+    .photo-lb-close {
+      position: absolute;
+      top: 16px;
+      right: 20px;
+      background: none;
+      border: none;
+      color: #fff;
+      font-size: 28px;
+      cursor: pointer;
+      opacity: 0.7;
+      line-height: 1;
+    }
+    .photo-lb-close:hover { opacity: 1; }
+
     /* Footer */
     .footer {
       margin-top: 60px;
@@ -785,9 +853,40 @@
     </div>
   </div>
 
+  <!-- Fotos -->
+  <div class="section">
+    <p class="section-label">Fotos</p>
+  </div>
+  <div class="photo-carousel">
+    <div class="photo-slide" onclick="openPhoto('photos/santuari-1.jpg')">
+      <img src="photos/santuari-1.jpg" alt="Santuari 15 mayo" loading="lazy" />
+    </div>
+    <div class="photo-slide" onclick="openPhoto('photos/santuari-2.jpg')">
+      <img src="photos/santuari-2.jpg" alt="Santuari 15 mayo" loading="lazy" />
+    </div>
+    <div class="photo-slide" onclick="openPhoto('photos/santuari-3.jpg')">
+      <img src="photos/santuari-3.jpg" alt="Santuari 15 mayo" loading="lazy" />
+    </div>
+    <div class="photo-slide" onclick="openPhoto('photos/santuari-4.jpg')">
+      <img src="photos/santuari-4.jpg" alt="Santuari 15 mayo" loading="lazy" />
+    </div>
+    <div class="photo-slide" onclick="openPhoto('photos/santuari-5.jpg')">
+      <img src="photos/santuari-5.jpg" alt="Santuari 15 mayo" loading="lazy" />
+    </div>
+    <div class="photo-slide" onclick="openPhoto('photos/santuari-6.jpg')">
+      <img src="photos/santuari-6.jpg" alt="Santuari 15 mayo" loading="lazy" />
+    </div>
+  </div>
+
   <p class="footer">SER</p>
   <span class="footer-booking" onclick="openChat()">Fechas y booking &rarr; habla con el manager</span>
 
+</div>
+
+<!-- Photo lightbox -->
+<div class="photo-lb" id="photoLb" onclick="if(event.target===this)closePhoto()">
+  <button class="photo-lb-close" onclick="closePhoto()">&times;</button>
+  <img id="photoLbImg" src="" alt="" />
 </div>
 
 <!-- Video modal -->
@@ -959,7 +1058,19 @@ function closeVideo() {
   document.body.style.overflow = '';
 }
 
-document.addEventListener('keydown', e => { if (e.key === 'Escape') { closeVideo(); closeChat(); } });
+function openPhoto(src) {
+  document.getElementById('photoLbImg').src = src;
+  document.getElementById('photoLb').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function closePhoto() {
+  document.getElementById('photoLb').classList.remove('open');
+  document.getElementById('photoLbImg').src = '';
+  document.body.style.overflow = '';
+}
+
+document.addEventListener('keydown', e => { if (e.key === 'Escape') { closeVideo(); closePhoto(); closeChat(); } });
 
 /* ── Booking chatbot ─────────────────────────── */
 const chatWindow   = document.getElementById('chatWindow');
