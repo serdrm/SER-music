@@ -152,13 +152,20 @@
     }
 
     /* Platform links */
-    .links {
+    .links-row {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
       width: 100%;
+      margin-bottom: 4px;
+    }
+
+    .links {
+      flex: 1;
       display: flex;
       flex-wrap: wrap;
       justify-content: center;
       gap: 10px;
-      margin-bottom: 4px;
     }
 
     .btn {
@@ -351,13 +358,13 @@
     /* ── Content tabs ────────────────────────────── */
     .ctabs {
       display: flex;
+      flex-direction: column;
       gap: 6px;
-      width: 100%;
-      margin-top: 18px;
+      flex-shrink: 0;
     }
 
     .ctab {
-      flex: 1;
+      width: 70px;
       padding: 9px 0;
       border-radius: 10px;
       border: 1px solid var(--border);
@@ -702,6 +709,7 @@
   </div>
 
   <!-- Links -->
+  <div class="links-row">
   <div class="links">
     <a class="btn primary" href="https://open.spotify.com/artist/3HmC5My4nz020qQIu02JEw" target="_blank" rel="noopener noreferrer">
       <svg class="btn-icon" viewBox="0 0 24 24" fill="none">
@@ -758,6 +766,7 @@
     <button class="ctab active" data-tab="shows" onclick="switchTab('shows')">Shows</button>
     <button class="ctab" data-tab="news" onclick="switchTab('news')">News</button>
   </div>
+  </div><!-- end links-row -->
 
   <div class="ctab-panel active" id="panel-shows">
     <details class="show-entry" open>
