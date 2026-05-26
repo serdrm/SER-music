@@ -547,17 +547,26 @@
     { x: 0.30, y: 0.60, rx: 0.20, ry: 0.16, color: 'rgba(90,40,8,0.12)' },
   ];
 
-  let stars = [];
-  let brightStars = [];
+  let farStars = [];
+  let midStars = [];
+  let nearStars = [];
+  let currentScrollY = 0;
+  let needsDraw = true;
 
   function buildStars(w, h) {
-    stars = Array.from({ length: 300 }, () => ({
+    farStars = Array.from({ length: 60 }, () => ({
       x: Math.random() * w,
       y: Math.random() * h,
-      r: 0.3 + Math.random() * 1.7,
-      a: 0.2 + Math.random() * 0.8,
+      r: 0.3 + Math.random() * 0.6,
+      a: 0.2 + Math.random() * 0.5,
     }));
-    brightStars = Array.from({ length: 15 }, () => ({
+    midStars = Array.from({ length: 60 }, () => ({
+      x: Math.random() * w,
+      y: Math.random() * h,
+      r: 0.6 + Math.random() * 0.8,
+      a: 0.3 + Math.random() * 0.6,
+    }));
+    nearStars = Array.from({ length: 6 }, () => ({
       x: Math.random() * w,
       y: Math.random() * h,
       r: 1.2 + Math.random() * 1.0,
@@ -566,11 +575,11 @@
   }
 
   function draw() {
-    const w = canvas.width;
-    const h = canvas.height;
+    const w = window.innerWidth;
+    const h = window.innerHeight;
+    const scroll = currentScrollY;
 
     ctx.clearRect(0, 0, w, h);
-
     ctx.fillStyle = '#0E0803';
     ctx.fillRect(0, 0, w, h);
 
@@ -589,16 +598,29 @@
       ctx.restore();
     });
 
-    stars.forEach(s => {
+    const farOff = scroll * 0.1;
+    farStars.forEach(s => {
+      const y = ((s.y - farOff) % h + h) % h;
       ctx.beginPath();
-      ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
+      ctx.arc(s.x, y, s.r, 0, Math.PI * 2);
       ctx.fillStyle = `rgba(245,232,200,${s.a})`;
       ctx.fill();
     });
 
-    brightStars.forEach(s => {
+    const midOff = scroll * 0.25;
+    midStars.forEach(s => {
+      const y = ((s.y - midOff) % h + h) % h;
+      ctx.beginPath();
+      ctx.arc(s.x, y, s.r, 0, Math.PI * 2);
+      ctx.fillStyle = `rgba(245,232,200,${s.a})`;
+      ctx.fill();
+    });
+
+    const nearOff = scroll * 0.4;
+    nearStars.forEach(s => {
+      const y = ((s.y - nearOff) % h + h) % h;
       ctx.save();
-      ctx.translate(s.x, s.y);
+      ctx.translate(s.x, y);
       ctx.fillStyle = 'rgba(245,232,200,0.9)';
       ctx.beginPath();
       ctx.arc(0, 0, s.r, 0, Math.PI * 2);
@@ -616,15 +638,35 @@
     });
   }
 
-  function resize() {
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
-    buildStars(canvas.width, canvas.height);
-    draw();
+  function loop() {
+    if (needsDraw) {
+      draw();
+      needsDraw = false;
+    }
+    requestAnimationFrame(loop);
   }
+
+  function resize() {
+    const dpr = window.devicePixelRatio || 1;
+    const w = window.innerWidth;
+    const h = window.innerHeight;
+    canvas.width = w * dpr;
+    canvas.height = h * dpr;
+    canvas.style.width = w + 'px';
+    canvas.style.height = h + 'px';
+    ctx.scale(dpr, dpr);
+    buildStars(w, h);
+    needsDraw = true;
+  }
+
+  window.addEventListener('scroll', () => {
+    currentScrollY = window.scrollY;
+    needsDraw = true;
+  }, { passive: true });
 
   window.addEventListener('resize', resize);
   resize();
+  requestAnimationFrame(loop);
 })();
 </script>
 </body>
