@@ -348,41 +348,71 @@
       margin-top: 2px;
     }
 
-    /* ── Photos carousel ────────────────────────── */
-    .photo-carousel {
-      width: 100vw;
-      margin-left: calc(-50vw + 50%);
-      overflow-x: auto;
-      overflow-y: hidden;
+    /* ── Content tabs ────────────────────────────── */
+    .ctabs {
       display: flex;
-      gap: 10px;
-      padding: 4px 20px 12px;
-      scroll-snap-type: x mandatory;
-      -webkit-overflow-scrolling: touch;
-      scrollbar-width: none;
+      gap: 6px;
+      width: 100%;
+      margin-top: 18px;
     }
-    .photo-carousel::-webkit-scrollbar { display: none; }
 
-    .photo-slide {
-      flex-shrink: 0;
-      width: 82vw;
-      max-width: 360px;
-      scroll-snap-align: center;
+    .ctab {
+      flex: 1;
+      padding: 9px 0;
       border-radius: 10px;
-      overflow: hidden;
       border: 1px solid var(--border);
+      background: linear-gradient(160deg, #1E1510 0%, #130E08 100%);
+      color: var(--muted);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 10px;
+      font-weight: 500;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
       cursor: pointer;
+      transition: border-color 0.2s, color 0.2s, background 0.2s;
+      text-align: center;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .ctab.active {
+      border-color: rgba(217,120,32,0.55);
+      background: linear-gradient(160deg, #221608 0%, #160F05 100%);
+      color: var(--accent);
+    }
+
+    .ctab-panel {
+      display: none;
+      width: 100%;
+      padding-top: 14px;
+    }
+    .ctab-panel.active { display: block; }
+
+    .ctab-empty {
+      text-align: center;
+      color: var(--muted);
+      font-size: 12px;
+      padding: 24px 0;
+      letter-spacing: 0.06em;
+    }
+
+    /* Photo mini grid (inside Fotos tab) */
+    .photo-mini-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 6px;
+    }
+
+    .photo-mini-grid img {
+      width: 100%;
+      aspect-ratio: 1;
+      object-fit: cover;
+      border-radius: 7px;
+      cursor: pointer;
+      border: 1px solid var(--border);
+      display: block;
       transition: border-color 0.18s, transform 0.18s;
     }
-    .photo-slide:hover { border-color: rgba(217,120,32,0.45); transform: translateY(-2px); }
-
-    .photo-slide img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-      display: block;
-      aspect-ratio: 4/3;
-    }
+    .photo-mini-grid img:hover { border-color: rgba(217,120,32,0.45); transform: scale(1.03); }
 
     /* Lightbox */
     .photo-lb {
@@ -677,6 +707,32 @@
     </a>
   </div>
 
+  <!-- Content tabs -->
+  <div class="ctabs">
+    <button class="ctab active" data-tab="shows" onclick="switchTab('shows')">Shows</button>
+    <button class="ctab" data-tab="fotos" onclick="switchTab('fotos')">Fotos</button>
+    <button class="ctab" data-tab="news" onclick="switchTab('news')">News</button>
+  </div>
+
+  <div class="ctab-panel active" id="panel-shows">
+    <p class="ctab-empty">Próximas fechas — muy pronto.</p>
+  </div>
+
+  <div class="ctab-panel" id="panel-fotos">
+    <div class="photo-mini-grid">
+      <img src="photos/santuari-1.jpg" alt="Santuari" loading="lazy" onclick="openPhoto('photos/santuari-1.jpg')" />
+      <img src="photos/santuari-2.jpg" alt="Santuari" loading="lazy" onclick="openPhoto('photos/santuari-2.jpg')" />
+      <img src="photos/santuari-3.jpg" alt="Santuari" loading="lazy" onclick="openPhoto('photos/santuari-3.jpg')" />
+      <img src="photos/santuari-4.jpg" alt="Santuari" loading="lazy" onclick="openPhoto('photos/santuari-4.jpg')" />
+      <img src="photos/santuari-5.jpg" alt="Santuari" loading="lazy" onclick="openPhoto('photos/santuari-5.jpg')" />
+      <img src="photos/santuari-6.jpg" alt="Santuari" loading="lazy" onclick="openPhoto('photos/santuari-6.jpg')" />
+    </div>
+  </div>
+
+  <div class="ctab-panel" id="panel-news">
+    <p class="ctab-empty">Stay tuned.</p>
+  </div>
+
   <!-- Album -->
   <div class="section">
     <p class="section-label">Álbum</p>
@@ -853,31 +909,6 @@
     </div>
   </div>
 
-  <!-- Fotos -->
-  <div class="section">
-    <p class="section-label">Fotos</p>
-  </div>
-  <div class="photo-carousel">
-    <div class="photo-slide" onclick="openPhoto('photos/santuari-1.jpg')">
-      <img src="photos/santuari-1.jpg" alt="Santuari 15 mayo" loading="lazy" />
-    </div>
-    <div class="photo-slide" onclick="openPhoto('photos/santuari-2.jpg')">
-      <img src="photos/santuari-2.jpg" alt="Santuari 15 mayo" loading="lazy" />
-    </div>
-    <div class="photo-slide" onclick="openPhoto('photos/santuari-3.jpg')">
-      <img src="photos/santuari-3.jpg" alt="Santuari 15 mayo" loading="lazy" />
-    </div>
-    <div class="photo-slide" onclick="openPhoto('photos/santuari-4.jpg')">
-      <img src="photos/santuari-4.jpg" alt="Santuari 15 mayo" loading="lazy" />
-    </div>
-    <div class="photo-slide" onclick="openPhoto('photos/santuari-5.jpg')">
-      <img src="photos/santuari-5.jpg" alt="Santuari 15 mayo" loading="lazy" />
-    </div>
-    <div class="photo-slide" onclick="openPhoto('photos/santuari-6.jpg')">
-      <img src="photos/santuari-6.jpg" alt="Santuari 15 mayo" loading="lazy" />
-    </div>
-  </div>
-
   <p class="footer">SER</p>
   <span class="footer-booking" onclick="openChat()">Fechas y booking &rarr; habla con el manager</span>
 
@@ -1045,6 +1076,11 @@
 
 <script>
 /* ── Video modal ─────────────────────────────── */
+function switchTab(name) {
+  document.querySelectorAll('.ctab').forEach(t => t.classList.toggle('active', t.dataset.tab === name));
+  document.querySelectorAll('.ctab-panel').forEach(p => p.classList.toggle('active', p.id === 'panel-' + name));
+}
+
 function openVideo(id, title) {
   document.getElementById('videoFrame').src =
     'https://www.youtube.com/embed/' + id + '?autoplay=1&rel=0';
