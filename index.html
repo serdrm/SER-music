@@ -209,68 +209,19 @@
       left: 0;
       right: 0;
       z-index: 100;
-      display: flex;
-      justify-content: center;
+      background: rgba(13,9,4,0.88);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border-top: 1px solid rgba(217,120,32,0.15);
+      padding: 10px 16px 10px;
     }
 
-    .sp-skin {
-      width: 100%;
+    .sticky-player iframe {
+      display: block;
+      border-radius: 8px;
       max-width: 440px;
-      background: #160A02;
-      border: 2px solid;
-      border-color: #C87828 #3A1204 #3A1204 #C87828;
-      box-shadow:
-        inset 1px 1px 0 rgba(255,180,80,0.35),
-        inset -1px -1px 0 rgba(0,0,0,0.7),
-        0 -8px 32px rgba(0,0,0,0.9);
-      font-family: 'Courier New', monospace;
+      margin: 0 auto;
     }
-
-    .sp-titlebar {
-      background: linear-gradient(90deg, #6B2200 0%, #C87828 40%, #C87828 60%, #6B2200 100%);
-      padding: 3px 5px 2px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      border-bottom: 1px solid #3A1204;
-      user-select: none;
-    }
-
-    .sp-title-text {
-      font-size: 9px;
-      font-weight: bold;
-      color: #FFF0CC;
-      letter-spacing: 0.22em;
-      text-shadow: 1px 1px 0 rgba(0,0,0,0.8);
-    }
-
-    .sp-win-buttons { display: flex; gap: 2px; }
-
-    .sp-win-btn {
-      width: 14px;
-      height: 12px;
-      background: linear-gradient(180deg, #D4A050 0%, #906020 100%);
-      border: 1px solid;
-      border-color: #F0C868 #5A3200 #3A1A00 #F0C868;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 8px;
-      font-weight: bold;
-      color: #1C0800;
-      cursor: pointer;
-      line-height: 1;
-      font-family: 'Courier New', monospace;
-    }
-
-    .sp-win-btn:active {
-      border-color: #3A1A00 #F0C868 #F0C868 #3A1A00;
-      background: linear-gradient(180deg, #906020 0%, #D4A050 100%);
-    }
-
-    .sp-body { padding: 5px 6px 7px; }
-
-    .sp-body iframe { display: block; border-radius: 2px; width: 100%; }
 
     /* Sections */
     .section {
@@ -874,26 +825,14 @@
 
 <!-- Sticky player -->
 <div class="sticky-player">
-  <div class="sp-skin">
-    <div class="sp-titlebar">
-      <span class="sp-title-text">▶ SER.EXE</span>
-      <div class="sp-win-buttons">
-        <span class="sp-win-btn">_</span>
-        <span class="sp-win-btn">□</span>
-        <span class="sp-win-btn">✕</span>
-      </div>
-    </div>
-    <div class="sp-body">
-      <iframe
-        src="https://open.spotify.com/embed/artist/3HmC5My4nz020qQIu02JEw?utm_source=generator&theme=0"
-        width="100%"
-        height="80"
-        frameborder="0"
-        allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
-        loading="lazy">
-      </iframe>
-    </div>
-  </div>
+  <iframe
+    src="https://open.spotify.com/embed/artist/3HmC5My4nz020qQIu02JEw?utm_source=generator&theme=0"
+    width="100%"
+    height="80"
+    frameborder="0"
+    allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
+    loading="lazy">
+  </iframe>
 </div>
 
 <script>
