@@ -28,7 +28,7 @@
     html { scroll-behavior: smooth; }
 
     body {
-      background: radial-gradient(ellipse 110% 55% at 50% 0%, #5A2808 0%, #2A1004 40%, #0E0803 75%);
+      background: url('space-bg.png') center top / cover no-repeat fixed;
       color: var(--text);
       font-family: 'DM Sans', sans-serif;
       font-weight: 300;
@@ -37,6 +37,15 @@
       justify-content: center;
       padding: 52px 20px 120px;
       overflow-x: hidden;
+    }
+
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background: rgba(8, 4, 2, 0.62);
+      z-index: 0;
+      pointer-events: none;
     }
 
     body::after {
@@ -51,6 +60,8 @@
     }
 
     .page {
+      position: relative;
+      z-index: 1;
       width: 100%;
       max-width: 440px;
       display: flex;
@@ -355,18 +366,9 @@
       text-align: center;
       text-transform: uppercase;
     }
-
-    #space-bg {
-      position: fixed;
-      inset: 0;
-      z-index: -1;
-      width: 100%;
-      height: 100%;
-    }
   </style>
 </head>
 <body>
-<canvas id="space-bg"></canvas>
 <div class="page">
 
   <!-- Header -->
@@ -534,140 +536,5 @@
   </iframe>
 </div>
 
-
-<script>
-(function () {
-  const canvas = document.getElementById('space-bg');
-  const ctx = canvas.getContext('2d');
-
-  const NEBULAE = [
-    { x: 0.15, y: 0.22, rx: 0.28, ry: 0.18, color: 'rgba(90,40,8,0.18)' },
-    { x: 0.80, y: 0.55, rx: 0.22, ry: 0.26, color: 'rgba(139,58,10,0.14)' },
-    { x: 0.50, y: 0.80, rx: 0.35, ry: 0.20, color: 'rgba(217,120,32,0.07)' },
-    { x: 0.30, y: 0.60, rx: 0.20, ry: 0.16, color: 'rgba(90,40,8,0.12)' },
-  ];
-
-  let farStars = [];
-  let midStars = [];
-  let nearStars = [];
-  let currentScrollY = 0;
-  let needsDraw = true;
-
-  function buildStars(w, h) {
-    farStars = Array.from({ length: 60 }, () => ({
-      x: Math.random() * w,
-      y: Math.random() * h,
-      r: 0.3 + Math.random() * 0.6,
-      a: 0.2 + Math.random() * 0.5,
-    }));
-    midStars = Array.from({ length: 60 }, () => ({
-      x: Math.random() * w,
-      y: Math.random() * h,
-      r: 0.6 + Math.random() * 0.8,
-      a: 0.3 + Math.random() * 0.6,
-    }));
-    nearStars = Array.from({ length: 6 }, () => ({
-      x: Math.random() * w,
-      y: Math.random() * h,
-      r: 1.2 + Math.random() * 1.0,
-      spike: 6 + Math.random() * 8,
-    }));
-  }
-
-  function draw() {
-    const w = window.innerWidth;
-    const h = window.innerHeight;
-    const scroll = currentScrollY;
-
-    ctx.clearRect(0, 0, w, h);
-    ctx.fillStyle = '#0E0803';
-    ctx.fillRect(0, 0, w, h);
-
-    NEBULAE.forEach(n => {
-      const gx = n.x * w;
-      const gy = n.y * h;
-      const grad = ctx.createRadialGradient(gx, gy, 0, gx, gy, Math.max(n.rx * w, n.ry * h));
-      grad.addColorStop(0, n.color);
-      grad.addColorStop(1, 'rgba(0,0,0,0)');
-      ctx.save();
-      ctx.scale(1, (n.ry * h) / (n.rx * w));
-      ctx.fillStyle = grad;
-      ctx.beginPath();
-      ctx.arc(gx, gy * (n.rx * w) / (n.ry * h), n.rx * w, 0, Math.PI * 2);
-      ctx.fill();
-      ctx.restore();
-    });
-
-    const farOff = scroll * 0.1;
-    farStars.forEach(s => {
-      const y = ((s.y - farOff) % h + h) % h;
-      ctx.beginPath();
-      ctx.arc(s.x, y, s.r, 0, Math.PI * 2);
-      ctx.fillStyle = `rgba(245,232,200,${s.a})`;
-      ctx.fill();
-    });
-
-    const midOff = scroll * 0.25;
-    midStars.forEach(s => {
-      const y = ((s.y - midOff) % h + h) % h;
-      ctx.beginPath();
-      ctx.arc(s.x, y, s.r, 0, Math.PI * 2);
-      ctx.fillStyle = `rgba(245,232,200,${s.a})`;
-      ctx.fill();
-    });
-
-    const nearOff = scroll * 0.4;
-    nearStars.forEach(s => {
-      const y = ((s.y - nearOff) % h + h) % h;
-      ctx.save();
-      ctx.translate(s.x, y);
-      ctx.fillStyle = 'rgba(245,232,200,0.9)';
-      ctx.beginPath();
-      ctx.arc(0, 0, s.r, 0, Math.PI * 2);
-      ctx.fill();
-      const sp = s.spike;
-      ctx.strokeStyle = 'rgba(245,232,200,0.5)';
-      ctx.lineWidth = 0.6;
-      ctx.beginPath(); ctx.moveTo(-sp, 0); ctx.lineTo(sp, 0); ctx.stroke();
-      ctx.beginPath(); ctx.moveTo(0, -sp); ctx.lineTo(0, sp); ctx.stroke();
-      ctx.strokeStyle = 'rgba(245,232,200,0.2)';
-      ctx.lineWidth = 0.4;
-      ctx.beginPath(); ctx.moveTo(-sp * 0.6, -sp * 0.6); ctx.lineTo(sp * 0.6, sp * 0.6); ctx.stroke();
-      ctx.beginPath(); ctx.moveTo(sp * 0.6, -sp * 0.6); ctx.lineTo(-sp * 0.6, sp * 0.6); ctx.stroke();
-      ctx.restore();
-    });
-  }
-
-  function loop() {
-    if (needsDraw) {
-      draw();
-      needsDraw = false;
-    }
-    requestAnimationFrame(loop);
-  }
-
-  function resize() {
-    const dpr = window.devicePixelRatio || 1;
-    const w = window.innerWidth;
-    const h = window.innerHeight;
-    canvas.width = w * dpr;
-    canvas.height = h * dpr;
-    canvas.style.width = w + 'px';
-    canvas.style.height = h + 'px';
-    ctx.scale(dpr, dpr);
-    buildStars(w, h);
-    needsDraw = true;
-  }
-
-  window.addEventListener('scroll', () => {
-    currentScrollY = window.scrollY;
-    needsDraw = true;
-  }, { passive: true });
-
-  window.addEventListener('resize', resize);
-  resize();
-  requestAnimationFrame(loop);
-})();
-</script>
 </body>
 </html>
