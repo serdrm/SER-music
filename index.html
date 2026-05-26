@@ -395,7 +395,53 @@
       letter-spacing: 0.06em;
     }
 
-    /* Photo mini grid (inside Fotos tab) */
+    /* Show entries */
+    .show-entry {
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      overflow: hidden;
+      background: linear-gradient(160deg, #1E1510 0%, #130E08 100%);
+      margin-bottom: 8px;
+    }
+
+    .show-summary {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 11px 14px;
+      cursor: pointer;
+      list-style: none;
+      user-select: none;
+      -webkit-tap-highlight-color: transparent;
+      gap: 10px;
+    }
+    .show-summary::-webkit-details-marker { display: none; }
+
+    .show-info { display: flex; flex-direction: column; gap: 2px; flex: 1; }
+
+    .show-venue {
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--text);
+    }
+
+    .show-date {
+      font-size: 10px;
+      color: var(--muted);
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .show-chevron {
+      flex-shrink: 0;
+      color: var(--muted);
+      transition: transform 0.22s;
+    }
+    .show-entry[open] .show-chevron { transform: rotate(180deg); }
+
+    .show-photos { padding: 0 10px 10px; }
+
+    /* Photo mini grid */
     .photo-mini-grid {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
@@ -710,23 +756,31 @@
   <!-- Content tabs -->
   <div class="ctabs">
     <button class="ctab active" data-tab="shows" onclick="switchTab('shows')">Shows</button>
-    <button class="ctab" data-tab="fotos" onclick="switchTab('fotos')">Fotos</button>
     <button class="ctab" data-tab="news" onclick="switchTab('news')">News</button>
   </div>
 
   <div class="ctab-panel active" id="panel-shows">
-    <p class="ctab-empty">Próximas fechas — muy pronto.</p>
-  </div>
-
-  <div class="ctab-panel" id="panel-fotos">
-    <div class="photo-mini-grid">
-      <img src="photos/santuari-1.jpg" alt="Santuari" loading="lazy" onclick="openPhoto('photos/santuari-1.jpg')" />
-      <img src="photos/santuari-2.jpg" alt="Santuari" loading="lazy" onclick="openPhoto('photos/santuari-2.jpg')" />
-      <img src="photos/santuari-3.jpg" alt="Santuari" loading="lazy" onclick="openPhoto('photos/santuari-3.jpg')" />
-      <img src="photos/santuari-4.jpg" alt="Santuari" loading="lazy" onclick="openPhoto('photos/santuari-4.jpg')" />
-      <img src="photos/santuari-5.jpg" alt="Santuari" loading="lazy" onclick="openPhoto('photos/santuari-5.jpg')" />
-      <img src="photos/santuari-6.jpg" alt="Santuari" loading="lazy" onclick="openPhoto('photos/santuari-6.jpg')" />
-    </div>
+    <details class="show-entry" open>
+      <summary class="show-summary">
+        <div class="show-info">
+          <span class="show-venue">Santuari</span>
+          <span class="show-date">15 mayo 2025 · Barcelona</span>
+        </div>
+        <svg class="show-chevron" width="16" height="16" viewBox="0 0 16 16" fill="none">
+          <path d="M4 6l4 4 4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </summary>
+      <div class="show-photos">
+        <div class="photo-mini-grid">
+          <img src="photos/santuari-1.jpg" alt="Santuari" loading="lazy" onclick="openPhoto('photos/santuari-1.jpg')" />
+          <img src="photos/santuari-2.jpg" alt="Santuari" loading="lazy" onclick="openPhoto('photos/santuari-2.jpg')" />
+          <img src="photos/santuari-3.jpg" alt="Santuari" loading="lazy" onclick="openPhoto('photos/santuari-3.jpg')" />
+          <img src="photos/santuari-4.jpg" alt="Santuari" loading="lazy" onclick="openPhoto('photos/santuari-4.jpg')" />
+          <img src="photos/santuari-5.jpg" alt="Santuari" loading="lazy" onclick="openPhoto('photos/santuari-5.jpg')" />
+          <img src="photos/santuari-6.jpg" alt="Santuari" loading="lazy" onclick="openPhoto('photos/santuari-6.jpg')" />
+        </div>
+      </div>
+    </details>
   </div>
 
   <div class="ctab-panel" id="panel-news">
