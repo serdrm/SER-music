@@ -387,6 +387,12 @@
       aspect-ratio: 16/9;
     }
 
+    .video-thumb:last-child:nth-child(odd) {
+      grid-column: 1 / -1;
+      max-width: calc(50% - 5px);
+      justify-self: center;
+    }
+
     .video-thumb:hover { transform: translateY(-2px); border-color: var(--accent); }
 
     .video-thumb img {
