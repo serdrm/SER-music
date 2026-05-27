@@ -21,6 +21,37 @@ Si te preguntan algo que no tiene que ver con booking, redirige amablemente.
 Habla siempre en el mismo idioma que el usuario (español o inglés).
 Respuestas cortas, directas y con buena onda.`;
 
+async function sendConfirmationEmail(data, resendKey) {
+  const nombre = data.nombre?.split(' ')[0] || data.nombre || 'Hola';
+  const html = `
+    <div style="font-family:sans-serif;max-width:520px;margin:0 auto;color:#1a1a1a">
+      <h2 style="color:#D97820;margin-bottom:4px">🎤 Consulta recibida</h2>
+      <p>Hola ${nombre},</p>
+      <p>Hemos recibido tu consulta de booking para <strong>${data.evento}</strong>${data.fecha ? ` el <strong>${data.fecha}</strong>` : ''}${data.ciudad ? ` en <strong>${data.ciudad}</strong>` : ''}.</p>
+      <p>El equipo de SER revisará tu propuesta y se pondrá en contacto contigo en las próximas <strong>24–48 horas</strong>.</p>
+      <p>¡Gracias por tu interés!</p>
+      <p style="margin-top:40px;padding-top:16px;border-top:1px solid #eee;color:#888;font-size:12px">
+        SER · Post Pop · Barcelona<br>
+        <a href="https://ser-music.com" style="color:#D97820">ser-music.com</a> ·
+        <a href="https://instagram.com/unsergioromero" style="color:#D97820">@unsergioromero</a>
+      </p>
+    </div>`;
+
+  return fetch('https://api.resend.com/emails', {
+    method: 'POST',
+    headers: {
+      'Authorization': `Bearer ${resendKey}`,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      from: 'SER Booking <onboarding@resend.dev>',
+      to: [data.email],
+      subject: `✅ Hemos recibido tu consulta de booking — SER`,
+      html,
+    }),
+  });
+}
+
 async function sendBookingEmail(data, resendKey) {
   const html = `
     <div style="font-family:sans-serif;max-width:520px;margin:0 auto">
@@ -109,7 +140,10 @@ export default async function handler(req) {
     if (resendKey) {
       try {
         const bookingData = JSON.parse(bookingMatch[1]);
-        await sendBookingEmail(bookingData, resendKey);
+        await Promise.all([
+          sendBookingEmail(bookingData, resendKey),
+          sendConfirmationEmail(bookingData, resendKey),
+        ]);
       } catch (e) {
         console.error('Booking email error:', e);
       }
