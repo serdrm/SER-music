@@ -237,6 +237,29 @@
       height: 100px;
     }
 
+    .player-reopen-btn {
+      position: fixed;
+      bottom: 16px;
+      left: 16px;
+      z-index: 100;
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      background: rgba(13,9,4,0.92);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid rgba(var(--accent-rgb),0.4);
+      color: var(--accent);
+      font-size: 18px;
+      cursor: pointer;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.4);
+      transition: transform 0.15s, box-shadow 0.15s;
+    }
+    .player-reopen-btn:hover { transform: scale(1.1); box-shadow: 0 6px 24px rgba(var(--accent-rgb),0.3); }
+
     /* Sections */
     .section {
       width: 100%;
@@ -1094,8 +1117,10 @@
 </div>
 
 <!-- Sticky player -->
+<button class="player-reopen-btn" id="playerReopenBtn" onclick="reopenPlayer()" title="Abrir reproductor">♫</button>
+
 <div class="sticky-player" id="stickyPlayer">
-  <button onclick="document.getElementById('stickyPlayer').style.display='none'" style="position:absolute;top:6px;right:8px;background:none;border:none;color:rgba(255,255,255,0.4);font-size:14px;cursor:pointer;line-height:1;z-index:1;">✕</button>
+  <button onclick="closePlayer()" style="position:absolute;top:6px;right:8px;background:none;border:none;color:rgba(255,255,255,0.4);font-size:14px;cursor:pointer;line-height:1;z-index:1;">✕</button>
   <iframe
     src="https://open.spotify.com/embed/artist/3HmC5My4nz020qQIu02JEw?utm_source=generator&theme=0"
     width="100%"
@@ -1383,6 +1408,25 @@ async function sendChat() {
   window.addEventListener('touchmove',  function(e){ if(dragging) { e.preventDefault(); onMove(e.touches[0].clientX, e.touches[0].clientY); }}, {passive:false});
   window.addEventListener('touchend',   onEnd);
 })();
+
+function closePlayer() {
+  var player = document.getElementById('stickyPlayer');
+  var btn = document.getElementById('playerReopenBtn');
+  if (player) player.style.display = 'none';
+  if (btn) btn.style.display = 'flex';
+  localStorage.setItem('playerClosed', '1');
+}
+
+function reopenPlayer() {
+  var player = document.getElementById('stickyPlayer');
+  var btn = document.getElementById('playerReopenBtn');
+  if (player) player.style.display = 'block';
+  if (btn) btn.style.display = 'none';
+  localStorage.removeItem('playerClosed');
+}
+
+// Restore closed state on load
+if (localStorage.getItem('playerClosed') === '1') closePlayer();
 </script>
 </body>
 </html>
