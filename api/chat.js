@@ -67,7 +67,7 @@ export default async function handler(req) {
   const anthropicKey = process.env.ANTHROPIC_API_KEY;
   if (!anthropicKey) {
     return new Response(
-      JSON.stringify({ reply: 'El chat no está disponible en este momento. Escríbenos por Instagram @unsergioromero.' }),
+      JSON.stringify({ reply: `DEBUG: ANTHROPIC_API_KEY no encontrada. Variables disponibles: ${Object.keys(process.env).filter(k => k.includes('ANTHROPIC') || k.includes('RESEND')).join(', ') || 'ninguna'}` }),
       { status: 200, headers: { 'Content-Type': 'application/json' } }
     );
   }
