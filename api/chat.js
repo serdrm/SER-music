@@ -80,7 +80,7 @@ export default async function handler(req) {
       'content-type': 'application/json',
     },
     body: JSON.stringify({
-      model: 'claude-haiku-4-5-20251001',
+      model: 'claude-3-5-haiku-20241022',
       max_tokens: 500,
       system: SYSTEM,
       messages: messages.slice(-10),
@@ -89,9 +89,9 @@ export default async function handler(req) {
 
   if (!response.ok) {
     const err = await response.text();
-    console.error('Anthropic error:', err);
+    console.error('Anthropic error:', response.status, err);
     return new Response(
-      JSON.stringify({ reply: 'Algo falló en el servidor. Inténtalo de nuevo.' }),
+      JSON.stringify({ reply: `Error ${response.status}: ${err}` }),
       { status: 200, headers: { 'Content-Type': 'application/json' } }
     );
   }
