@@ -1064,7 +1064,7 @@
 </div>
 
 <!-- Chat widget -->
-<button class="chat-fab" onclick="openChat()" title="Booking & Fechas" aria-label="Abrir chat de booking">
+<button class="chat-fab" onclick="toggleChat()" title="Booking & Fechas" aria-label="Abrir chat de booking">
   <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
     <path d="M20 2H4C2.9 2 2 2.9 2 4v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2z" fill="white"/>
   </svg>
@@ -1076,7 +1076,7 @@
     Manager IA &nbsp;·&nbsp; SER
   </div>
   <div class="chat-messages" id="chatMessages">
-    <div class="chat-msg agent">Hola! Soy el manager virtual de SER 👋 Cuéntame sobre tu evento — ¿qué tipo de fecha tienes en mente?</div>
+    <div class="chat-msg agent">¡Hola! 👋 Soy el manager virtual de SER.<br><br>¿Quieres contratar a SER para un show, festival o evento privado? Cuéntame tu idea y gestionamos el booking juntos 🎤<br><br>¿Cómo te llamas y de qué promotora o venue eres?</div>
   </div>
   <div class="chat-input-row">
     <input class="chat-input" id="chatInput" type="text" placeholder="Escribe tu mensaje…" onkeydown="if(event.key==='Enter')sendChat()" />
@@ -1266,6 +1266,14 @@ function openChat() {
 
 function closeChat() {
   chatWindow.classList.remove('open');
+}
+
+function toggleChat() {
+  if (chatWindow.classList.contains('open')) {
+    closeChat();
+  } else {
+    openChat();
+  }
 }
 
 function addMsg(text, role) {
