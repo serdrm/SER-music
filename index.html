@@ -64,48 +64,74 @@
 
     /* Header */
     .header-wrap {
+      position: relative;
       display: flex;
       flex-direction: column;
       align-items: center;
       width: 100%;
+      padding-top: 6px;
       margin-bottom: 6px;
     }
 
-    .hero-photo {
-      width: 100%;
-      border-radius: 16px;
-      overflow: hidden;
+    .rings {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -58%);
+      pointer-events: none;
+      width: 240px;
+      height: 240px;
+      opacity: 0.22;
+    }
+
+    .avatar-wrap {
       position: relative;
       margin-bottom: 14px;
+      z-index: 1;
     }
 
-    .hero-photo img {
-      width: 100%;
-      height: 320px;
-      object-fit: cover;
-      object-position: center 15%;
-      display: block;
-    }
-
-    .hero-overlay {
+    .avatar-wrap::before {
+      content: '';
       position: absolute;
-      inset: 0;
-      background: linear-gradient(to bottom, transparent 30%, rgba(2,12,18,0.92) 100%);
-      display: flex;
-      align-items: flex-end;
-      padding: 0 20px 18px;
+      inset: -32px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(var(--accent-rgb),0.35) 0%, transparent 65%);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .avatar {
+      position: relative;
+      z-index: 1;
+      width: 78px;
+      height: 78px;
+      border-radius: 50%;
+      object-fit: cover;
+      display: block;
+      border: 2px solid rgba(var(--accent-rgb),0.7);
+      filter: brightness(0.88) saturate(1.2) contrast(1.05);
+    }
+
+    .avatar-wrap::after {
+      content: '';
+      position: absolute;
+      inset: -8px;
+      border-radius: 50%;
+      border: 1px solid rgba(var(--accent-rgb),0.3);
+      pointer-events: none;
+      z-index: 0;
     }
 
     h1 {
       font-family: 'Big Shoulders Display', sans-serif;
-      font-size: 80px;
+      font-size: 68px;
       font-weight: 900;
       letter-spacing: 0.02em;
       line-height: 1;
       text-transform: uppercase;
-      margin-bottom: 0;
+      margin-bottom: 4px;
       color: #FFFFFF;
-      text-shadow: 0 2px 24px rgba(0,0,0,0.6);
+      text-shadow: 0 0 40px rgba(var(--accent-rgb),0.6), 0 0 100px rgba(var(--accent-rgb),0.2);
     }
 
     .meta {
@@ -491,9 +517,9 @@
 
       .sticky-player iframe { max-width: 700px; }
 
-      h1 { font-size: 100px; }
+      h1 { font-size: 86px; }
 
-      .hero-photo img { height: 420px; }
+      .avatar { width: 94px; height: 94px; }
 
       .album-card { width: 280px; }
 
@@ -724,12 +750,19 @@
 
   <!-- Header -->
   <div class="header-wrap">
-    <div class="hero-photo">
-      <img src="photos/hero.jpg" alt="SER" />
-      <div class="hero-overlay">
-        <h1>SER</h1>
-      </div>
+    <svg class="rings" viewBox="0 0 340 340" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <circle cx="170" cy="170" r="62"  stroke="rgba(var(--accent-rgb),1)" stroke-width="1"/>
+      <circle cx="170" cy="170" r="96"  stroke="rgba(var(--accent-rgb),1)" stroke-width="0.8"/>
+      <circle cx="170" cy="170" r="130" stroke="rgba(var(--accent-rgb),1)" stroke-width="0.6"/>
+      <circle cx="170" cy="170" r="162" stroke="rgba(var(--accent-rgb),1)" stroke-width="0.5"/>
+      <circle cx="170" cy="170" r="166" stroke="rgba(var(--accent-rgb),1)" stroke-width="0.2"/>
+    </svg>
+    <div class="avatar-wrap">
+      <img class="avatar"
+           src="https://i.scdn.co/image/ab6761610000f1781d30e2a0c7f09cbcc17a88ab"
+           alt="SER" />
     </div>
+    <h1>SER</h1>
     <p class="meta">Barcelona &nbsp;&middot;&nbsp; Post Pop</p>
     <p class="tagline">Venezuelan flow en tierras Europeas</p>
   </div>
