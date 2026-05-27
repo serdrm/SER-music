@@ -214,22 +214,24 @@
     /* Sticky player */
     .sticky-player {
       position: fixed;
-      bottom: 0;
-      left: 0;
-      right: 0;
+      bottom: max(16px, env(safe-area-inset-bottom));
+      left: 50%;
+      transform: translateX(-50%);
       z-index: 100;
-      background: rgba(13,9,4,0.88);
+      background: rgba(13,9,4,0.92);
       backdrop-filter: blur(20px);
       -webkit-backdrop-filter: blur(20px);
-      border-top: 1px solid rgba(var(--accent-rgb),0.15);
-      padding: 10px 16px max(10px, env(safe-area-inset-bottom));
+      border: 1px solid rgba(var(--accent-rgb),0.18);
+      border-radius: 14px;
+      padding: 8px 10px;
+      width: calc(100% - 32px);
+      max-width: 440px;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.4);
     }
 
     .sticky-player iframe {
       display: block;
       border-radius: 8px;
-      max-width: 440px;
-      margin: 0 auto;
     }
 
     /* Sections */
@@ -515,7 +517,7 @@
     @media (min-width: 768px) {
       .page { max-width: 700px; }
 
-      .sticky-player iframe { max-width: 700px; }
+      .sticky-player { max-width: 700px; }
 
       h1 { font-size: 86px; }
 
