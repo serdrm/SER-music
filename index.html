@@ -509,6 +509,36 @@
       text-transform: uppercase;
     }
 
+    /* ── Desktop ─────────────────────────────────── */
+    @media (min-width: 768px) {
+      .page { max-width: 700px; }
+
+      .sticky-player iframe { max-width: 700px; }
+
+      h1 { font-size: 86px; }
+
+      .avatar { width: 94px; height: 94px; }
+
+      .album-card { width: 280px; }
+
+      .tracks-grid { grid-template-columns: repeat(4, 1fr); }
+
+      .video-grid { grid-template-columns: repeat(3, 1fr); }
+
+      /* Con 3 columnas 9 videos encajan perfectos, sin huérfano */
+      .video-thumb:last-child:nth-child(odd) {
+        grid-column: auto;
+        max-width: 100%;
+        justify-self: auto;
+      }
+
+      .photo-mini-grid { grid-template-columns: repeat(6, 1fr); }
+
+      .btn { width: 58px; }
+
+      .ctab { width: 80px; }
+    }
+
     #space-bg {
       position: fixed;
       inset: 0;
