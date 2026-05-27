@@ -214,7 +214,7 @@
     /* Sticky player */
     .sticky-player {
       position: fixed;
-      bottom: max(16px, env(safe-area-inset-bottom));
+      bottom: 16px;
       left: 16px;
       z-index: 100;
       background: rgba(13,9,4,0.92);
@@ -225,7 +225,11 @@
       padding: 6px 8px;
       width: 240px;
       box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+      cursor: grab;
+      user-select: none;
+      touch-action: none;
     }
+    .sticky-player.dragging { cursor: grabbing; box-shadow: 0 12px 40px rgba(0,0,0,0.6); }
 
     .sticky-player iframe {
       display: block;
@@ -1322,6 +1326,63 @@ async function sendChat() {
   chatSend.disabled = false;
   chatInput.focus();
 }
+
+// Draggable player
+(function(){
+  var el = document.getElementById('stickyPlayer');
+  if (!el) return;
+
+  // Restore saved position
+  var saved = localStorage.getItem('playerPos');
+  if (saved) {
+    var p = JSON.parse(saved);
+    el.style.left = p.x + 'px';
+    el.style.top  = p.y + 'px';
+    el.style.bottom = 'auto';
+  }
+
+  var startX, startY, startL, startT, dragging = false;
+
+  function getPos() {
+    var r = el.getBoundingClientRect();
+    return { x: r.left, y: r.top };
+  }
+
+  function onStart(cx, cy) {
+    dragging = true;
+    var pos = getPos();
+    el.style.left   = pos.x + 'px';
+    el.style.top    = pos.y + 'px';
+    el.style.bottom = 'auto';
+    startX = cx; startY = cy;
+    startL = pos.x; startT = pos.y;
+    el.classList.add('dragging');
+  }
+
+  function onMove(cx, cy) {
+    if (!dragging) return;
+    var dx = cx - startX, dy = cy - startY;
+    var nx = Math.max(0, Math.min(window.innerWidth  - el.offsetWidth,  startL + dx));
+    var ny = Math.max(0, Math.min(window.innerHeight - el.offsetHeight, startT + dy));
+    el.style.left = nx + 'px';
+    el.style.top  = ny + 'px';
+  }
+
+  function onEnd() {
+    if (!dragging) return;
+    dragging = false;
+    el.classList.remove('dragging');
+    localStorage.setItem('playerPos', JSON.stringify({ x: parseInt(el.style.left), y: parseInt(el.style.top) }));
+  }
+
+  el.addEventListener('mousedown',  function(e){ if(e.target.tagName!=='BUTTON') { e.preventDefault(); onStart(e.clientX, e.clientY); }});
+  window.addEventListener('mousemove', function(e){ onMove(e.clientX, e.clientY); });
+  window.addEventListener('mouseup',   onEnd);
+
+  el.addEventListener('touchstart', function(e){ if(e.target.tagName!=='BUTTON') { onStart(e.touches[0].clientX, e.touches[0].clientY); }}, {passive:true});
+  window.addEventListener('touchmove',  function(e){ if(dragging) { e.preventDefault(); onMove(e.touches[0].clientX, e.touches[0].clientY); }}, {passive:false});
+  window.addEventListener('touchend',   onEnd);
+})();
 </script>
 </body>
 </html>
