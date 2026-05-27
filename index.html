@@ -21,8 +21,8 @@
       --text: #F5E8C8;
       --muted: #9A7850;
       --accent: #00B4D8;
-      --accent-dim: rgba(217,120,32,0.14);
-      --accent-hover: rgba(217,120,32,0.24);
+      --accent-dim: rgba(0,180,216,0.14);
+      --accent-hover: rgba(0,180,216,0.24);
     }
 
     html { scroll-behavior: smooth; }
@@ -93,7 +93,7 @@
       position: absolute;
       inset: -32px;
       border-radius: 50%;
-      background: radial-gradient(circle, rgba(217,120,32,0.35) 0%, transparent 65%);
+      background: radial-gradient(circle, rgba(0,180,216,0.35) 0%, transparent 65%);
       pointer-events: none;
       z-index: 0;
     }
@@ -106,7 +106,7 @@
       border-radius: 50%;
       object-fit: cover;
       display: block;
-      border: 2px solid rgba(217,120,32,0.7);
+      border: 2px solid rgba(0,180,216,0.7);
       filter: brightness(0.88) saturate(1.2) contrast(1.05);
     }
 
@@ -115,7 +115,7 @@
       position: absolute;
       inset: -8px;
       border-radius: 50%;
-      border: 1px solid rgba(217,120,32,0.3);
+      border: 1px solid rgba(0,180,216,0.3);
       pointer-events: none;
       z-index: 0;
     }
@@ -129,7 +129,7 @@
       text-transform: uppercase;
       margin-bottom: 4px;
       color: #E8A030;
-      text-shadow: 0 0 40px rgba(217,120,32,0.6), 0 0 100px rgba(217,120,32,0.2);
+      text-shadow: 0 0 40px rgba(0,180,216,0.6), 0 0 100px rgba(0,180,216,0.2);
     }
 
     .meta {
@@ -186,16 +186,16 @@
     }
 
     .btn:hover {
-      border-color: rgba(217,120,32,0.5);
+      border-color: rgba(0,180,216,0.5);
       background: linear-gradient(160deg, #251A0E 0%, #1A1108 100%);
-      box-shadow: 0 4px 20px rgba(217,120,32,0.12);
+      box-shadow: 0 4px 20px rgba(0,180,216,0.12);
       transform: translateY(-2px);
     }
 
     .btn:active { transform: translateY(0); }
 
     .btn.primary {
-      border-color: rgba(217,120,32,0.5);
+      border-color: rgba(0,180,216,0.5);
       background: linear-gradient(160deg, #221608 0%, #160F05 100%);
     }
 
@@ -219,7 +219,7 @@
       background: rgba(13,9,4,0.88);
       backdrop-filter: blur(20px);
       -webkit-backdrop-filter: blur(20px);
-      border-top: 1px solid rgba(217,120,32,0.15);
+      border-top: 1px solid rgba(0,180,216,0.15);
       padding: 10px 16px max(10px, env(safe-area-inset-bottom));
     }
 
@@ -275,8 +275,8 @@
     }
 
     .album-card:hover {
-      border-color: rgba(217,120,32,0.5);
-      box-shadow: 0 8px 32px rgba(217,120,32,0.12);
+      border-color: rgba(0,180,216,0.5);
+      box-shadow: 0 8px 32px rgba(0,180,216,0.12);
       transform: translateY(-3px);
     }
 
@@ -326,8 +326,8 @@
     }
 
     .track:hover {
-      border-color: rgba(217,120,32,0.45);
-      box-shadow: 0 4px 16px rgba(217,120,32,0.10);
+      border-color: rgba(0,180,216,0.45);
+      box-shadow: 0 4px 16px rgba(0,180,216,0.10);
       transform: translateY(-2px);
     }
 
@@ -382,7 +382,7 @@
     }
 
     .ctab.active {
-      border-color: rgba(217,120,32,0.55);
+      border-color: rgba(0,180,216,0.55);
       background: linear-gradient(160deg, #221608 0%, #160F05 100%);
       color: var(--accent);
     }
@@ -465,7 +465,7 @@
       display: block;
       transition: border-color 0.18s, transform 0.18s;
     }
-    .photo-mini-grid img:hover { border-color: rgba(217,120,32,0.45); transform: scale(1.03); }
+    .photo-mini-grid img:hover { border-color: rgba(0,180,216,0.45); transform: scale(1.03); }
 
     /* Lightbox */
     .photo-lb {
@@ -592,7 +592,7 @@
 
     .play-icon {
       width: 34px; height: 34px;
-      background: rgba(217,120,32,0.88);
+      background: rgba(0,180,216,0.88);
       border-radius: 50%;
       display: flex; align-items: center; justify-content: center;
     }
@@ -635,7 +635,7 @@
       background: var(--accent); border: none; cursor: pointer;
       display: flex; align-items: center; justify-content: center;
       z-index: 1900;
-      box-shadow: 0 4px 18px rgba(217,120,32,0.5);
+      box-shadow: 0 4px 18px rgba(0,180,216,0.5);
       transition: transform 0.18s;
     }
     .chat-fab:hover { transform: scale(1.08); }
@@ -673,7 +673,7 @@
       align-self: flex-start; border-bottom-left-radius: 4px;
     }
     .chat-msg.user {
-      background: var(--accent-dim); border: 1px solid rgba(217,120,32,0.3);
+      background: var(--accent-dim); border: 1px solid rgba(0,180,216,0.3);
       align-self: flex-end; border-bottom-right-radius: 4px;
     }
     .chat-msg.typing { color: var(--muted); font-style: italic; }
