@@ -25,15 +25,15 @@ async function sendConfirmationEmail(data, resendKey) {
   const nombre = data.nombre?.split(' ')[0] || data.nombre || 'Hola';
   const html = `
     <div style="font-family:sans-serif;max-width:520px;margin:0 auto;color:#1a1a1a">
-      <h2 style="color:#D97820;margin-bottom:4px">🎤 Consulta recibida</h2>
+      <h2 style="color:#00B4D8;margin-bottom:4px">🎤 Consulta recibida</h2>
       <p>Hola ${nombre},</p>
       <p>Hemos recibido tu consulta de booking para <strong>${data.evento}</strong>${data.fecha ? ` el <strong>${data.fecha}</strong>` : ''}${data.ciudad ? ` en <strong>${data.ciudad}</strong>` : ''}.</p>
       <p>El equipo de SER revisará tu propuesta y se pondrá en contacto contigo en las próximas <strong>24–48 horas</strong>.</p>
       <p>¡Gracias por tu interés!</p>
       <p style="margin-top:40px;padding-top:16px;border-top:1px solid #eee;color:#888;font-size:12px">
         SER · Post Pop · Barcelona<br>
-        <a href="https://ser-music.com" style="color:#D97820">ser-music.com</a> ·
-        <a href="https://instagram.com/unsergioromero" style="color:#D97820">@unsergioromero</a>
+        <a href="https://ser-music.com" style="color:#00B4D8">ser-music.com</a> ·
+        <a href="https://instagram.com/unsergioromero" style="color:#00B4D8">@unsergioromero</a>
       </p>
     </div>`;
 
@@ -55,7 +55,7 @@ async function sendConfirmationEmail(data, resendKey) {
 async function sendBookingEmail(data, resendKey) {
   const html = `
     <div style="font-family:sans-serif;max-width:520px;margin:0 auto">
-      <h2 style="color:#D97820;margin-bottom:4px">🎤 Nueva consulta de booking</h2>
+      <h2 style="color:#00B4D8;margin-bottom:4px">🎤 Nueva consulta de booking</h2>
       <p style="color:#888;font-size:13px;margin-top:0">Recibida a través del chat de ser-music.com</p>
       <table style="width:100%;border-collapse:collapse;margin-top:16px;font-size:14px">
         <tr style="background:#f9f6f1"><td style="padding:10px 14px;font-weight:600;width:40%">Nombre / Empresa</td><td style="padding:10px 14px">${data.nombre}</td></tr>
