@@ -111,12 +111,12 @@ export default async function handler(req) {
         const bookingData = JSON.parse(bookingMatch[1]);
         const emailRes = await sendBookingEmail(bookingData, resendKey);
         const emailBody = await emailRes.text();
-        console.log('Resend status:', emailRes.status, emailBody);
+        reply += `\n\n[DEBUG EMAIL: ${emailRes.status} — ${emailBody}]`;
       } catch (e) {
-        console.error('Booking email error:', e);
+        reply += `\n\n[DEBUG EMAIL ERROR: ${e.message}]`;
       }
     } else {
-      console.log('No RESEND_API_KEY found');
+      reply += '\n\n[DEBUG: No RESEND_API_KEY]';
     }
   }
 
