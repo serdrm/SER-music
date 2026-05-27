@@ -46,7 +46,7 @@ async function sendBookingEmail(data, resendKey) {
     },
     body: JSON.stringify({
       from: 'SER Booking <onboarding@resend.dev>',
-      to: ['unsergioromero@gmail.com'],
+      to: ['sergiodromeroo@gmail.com'],
       subject: `🎤 Booking — ${data.nombre} · ${data.evento}`,
       html,
     }),
