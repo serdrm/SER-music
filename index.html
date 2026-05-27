@@ -1090,7 +1090,8 @@
 </div>
 
 <!-- Sticky player -->
-<div class="sticky-player">
+<div class="sticky-player" id="stickyPlayer">
+  <button onclick="document.getElementById('stickyPlayer').style.display='none'" style="position:absolute;top:6px;right:8px;background:none;border:none;color:rgba(255,255,255,0.4);font-size:14px;cursor:pointer;line-height:1;z-index:1;">✕</button>
   <iframe
     src="https://open.spotify.com/embed/artist/3HmC5My4nz020qQIu02JEw?utm_source=generator&theme=0"
     width="100%"
