@@ -391,6 +391,18 @@
       color: var(--accent);
     }
 
+    .ctab.booking-btn {
+      background: var(--accent);
+      color: #000;
+      border-color: transparent;
+      font-weight: 600;
+      letter-spacing: 0.06em;
+      margin-top: 4px;
+    }
+    .ctab.booking-btn:hover {
+      opacity: 0.85;
+    }
+
     .ctab-panel {
       display: none;
       width: 100%;
@@ -826,6 +838,7 @@
   <div class="ctabs">
     <button class="ctab" data-tab="shows" onclick="switchTab('shows')">Shows</button>
     <button class="ctab" data-tab="news" onclick="switchTab('news')">News</button>
+    <button class="ctab booking-btn" onclick="openChat()">Booking</button>
   </div>
   </div><!-- end links-row -->
 
