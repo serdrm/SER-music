@@ -16,19 +16,21 @@
 
     :root {
       --bg: #020C12;
-      --surface: #1A1007;
-      --border: #382010;
+      --accent-rgb: 0,180,216;
+      --day-gradient: radial-gradient(ellipse 110% 55% at 50% 0%, #082840 0%, #031018 40%, #020C12 75%);
+      --surface: #071520;
+      --border: #0D2535;
       --text: #F5E8C8;
       --muted: #9A7850;
       --accent: #00B4D8;
-      --accent-dim: rgba(0,180,216,0.14);
-      --accent-hover: rgba(0,180,216,0.24);
+      --accent-dim: rgba(var(--accent-rgb),0.14);
+      --accent-hover: rgba(var(--accent-rgb),0.24);
     }
 
     html { scroll-behavior: smooth; }
 
     body {
-      background: radial-gradient(ellipse 110% 55% at 50% 0%, #082840 0%, #031018 40%, #020C12 75%);
+      background: var(--day-gradient);
       color: var(--text);
       font-family: 'DM Sans', sans-serif;
       font-weight: 300;
@@ -93,7 +95,7 @@
       position: absolute;
       inset: -32px;
       border-radius: 50%;
-      background: radial-gradient(circle, rgba(0,180,216,0.35) 0%, transparent 65%);
+      background: radial-gradient(circle, rgba(var(--accent-rgb),0.35) 0%, transparent 65%);
       pointer-events: none;
       z-index: 0;
     }
@@ -106,7 +108,7 @@
       border-radius: 50%;
       object-fit: cover;
       display: block;
-      border: 2px solid rgba(0,180,216,0.7);
+      border: 2px solid rgba(var(--accent-rgb),0.7);
       filter: brightness(0.88) saturate(1.2) contrast(1.05);
     }
 
@@ -115,7 +117,7 @@
       position: absolute;
       inset: -8px;
       border-radius: 50%;
-      border: 1px solid rgba(0,180,216,0.3);
+      border: 1px solid rgba(var(--accent-rgb),0.3);
       pointer-events: none;
       z-index: 0;
     }
@@ -129,7 +131,7 @@
       text-transform: uppercase;
       margin-bottom: 4px;
       color: #E8A030;
-      text-shadow: 0 0 40px rgba(0,180,216,0.6), 0 0 100px rgba(0,180,216,0.2);
+      text-shadow: 0 0 40px rgba(var(--accent-rgb),0.6), 0 0 100px rgba(var(--accent-rgb),0.2);
     }
 
     .meta {
@@ -186,16 +188,16 @@
     }
 
     .btn:hover {
-      border-color: rgba(0,180,216,0.5);
+      border-color: rgba(var(--accent-rgb),0.5);
       background: linear-gradient(160deg, #251A0E 0%, #1A1108 100%);
-      box-shadow: 0 4px 20px rgba(0,180,216,0.12);
+      box-shadow: 0 4px 20px rgba(var(--accent-rgb),0.12);
       transform: translateY(-2px);
     }
 
     .btn:active { transform: translateY(0); }
 
     .btn.primary {
-      border-color: rgba(0,180,216,0.5);
+      border-color: rgba(var(--accent-rgb),0.5);
       background: linear-gradient(160deg, #221608 0%, #160F05 100%);
     }
 
@@ -219,7 +221,7 @@
       background: rgba(13,9,4,0.88);
       backdrop-filter: blur(20px);
       -webkit-backdrop-filter: blur(20px);
-      border-top: 1px solid rgba(0,180,216,0.15);
+      border-top: 1px solid rgba(var(--accent-rgb),0.15);
       padding: 10px 16px max(10px, env(safe-area-inset-bottom));
     }
 
@@ -275,8 +277,8 @@
     }
 
     .album-card:hover {
-      border-color: rgba(0,180,216,0.5);
-      box-shadow: 0 8px 32px rgba(0,180,216,0.12);
+      border-color: rgba(var(--accent-rgb),0.5);
+      box-shadow: 0 8px 32px rgba(var(--accent-rgb),0.12);
       transform: translateY(-3px);
     }
 
@@ -326,8 +328,8 @@
     }
 
     .track:hover {
-      border-color: rgba(0,180,216,0.45);
-      box-shadow: 0 4px 16px rgba(0,180,216,0.10);
+      border-color: rgba(var(--accent-rgb),0.45);
+      box-shadow: 0 4px 16px rgba(var(--accent-rgb),0.10);
       transform: translateY(-2px);
     }
 
@@ -382,7 +384,7 @@
     }
 
     .ctab.active {
-      border-color: rgba(0,180,216,0.55);
+      border-color: rgba(var(--accent-rgb),0.55);
       background: linear-gradient(160deg, #221608 0%, #160F05 100%);
       color: var(--accent);
     }
@@ -465,7 +467,7 @@
       display: block;
       transition: border-color 0.18s, transform 0.18s;
     }
-    .photo-mini-grid img:hover { border-color: rgba(0,180,216,0.45); transform: scale(1.03); }
+    .photo-mini-grid img:hover { border-color: rgba(var(--accent-rgb),0.45); transform: scale(1.03); }
 
     /* Lightbox */
     .photo-lb {
@@ -592,7 +594,7 @@
 
     .play-icon {
       width: 34px; height: 34px;
-      background: rgba(0,180,216,0.88);
+      background: rgba(var(--accent-rgb),0.88);
       border-radius: 50%;
       display: flex; align-items: center; justify-content: center;
     }
@@ -635,7 +637,7 @@
       background: var(--accent); border: none; cursor: pointer;
       display: flex; align-items: center; justify-content: center;
       z-index: 1900;
-      box-shadow: 0 4px 18px rgba(0,180,216,0.5);
+      box-shadow: 0 4px 18px rgba(var(--accent-rgb),0.5);
       transition: transform 0.18s;
     }
     .chat-fab:hover { transform: scale(1.08); }
@@ -673,7 +675,7 @@
       align-self: flex-start; border-bottom-left-radius: 4px;
     }
     .chat-msg.user {
-      background: var(--accent-dim); border: 1px solid rgba(0,180,216,0.3);
+      background: var(--accent-dim); border: 1px solid rgba(var(--accent-rgb),0.3);
       align-self: flex-end; border-bottom-right-radius: 4px;
     }
     .chat-msg.typing { color: var(--muted); font-style: italic; }
@@ -714,6 +716,33 @@
     }
     .footer-booking:hover { opacity: 1; }
   </style>
+  <script>
+  (function(){
+    var schemes = [
+      // 0 Dom — coral
+      {a:'#FF6B6B',r:'255,107,107',g:'radial-gradient(ellipse 110% 55% at 50% 0%, #3D1010 0%, #180505 40%, #0E0303 75%)'},
+      // 1 Lun — cyan
+      {a:'#00B4D8',r:'0,180,216',  g:'radial-gradient(ellipse 110% 55% at 50% 0%, #082840 0%, #031018 40%, #020C12 75%)'},
+      // 2 Mar — púrpura
+      {a:'#A855F7',r:'168,85,247', g:'radial-gradient(ellipse 110% 55% at 50% 0%, #1A0830 0%, #0D0418 40%, #080210 75%)'},
+      // 3 Mié — esmeralda
+      {a:'#10B981',r:'16,185,129', g:'radial-gradient(ellipse 110% 55% at 50% 0%, #042A18 0%, #02120C 40%, #010A06 75%)'},
+      // 4 Jue — ámbar
+      {a:'#F59E0B',r:'245,158,11', g:'radial-gradient(ellipse 110% 55% at 50% 0%, #2A1800 0%, #120900 40%, #080500 75%)'},
+      // 5 Vie — rosa
+      {a:'#EC4899',r:'236,72,153', g:'radial-gradient(ellipse 110% 55% at 50% 0%, #2D0A1A 0%, #15050D 40%, #0A0208 75%)'},
+      // 6 Sáb — índigo
+      {a:'#6366F1',r:'99,102,241', g:'radial-gradient(ellipse 110% 55% at 50% 0%, #0D0A30 0%, #060418 40%, #030210 75%)'},
+    ];
+    var s = schemes[new Date().getDay()];
+    var root = document.documentElement;
+    root.style.setProperty('--accent', s.a);
+    root.style.setProperty('--accent-rgb', s.r);
+    root.style.setProperty('--accent-dim', 'rgba('+s.r+',0.14)');
+    root.style.setProperty('--accent-hover', 'rgba('+s.r+',0.24)');
+    root.style.setProperty('--day-gradient', s.g);
+  })();
+  </script>
 </head>
 <body>
 <canvas id="space-bg"></canvas>
