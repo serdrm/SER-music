@@ -44,7 +44,7 @@ async function sendConfirmationEmail(data, resendKey) {
       'Content-Type': 'application/json',
     },
     body: JSON.stringify({
-      from: 'SER Booking <onboarding@resend.dev>',
+      from: 'SER Booking <booking@ser-music.com>',
       to: [data.email],
       subject: `✅ Hemos recibido tu consulta de booking — SER`,
       html,
@@ -76,8 +76,8 @@ async function sendBookingEmail(data, resendKey) {
       'Content-Type': 'application/json',
     },
     body: JSON.stringify({
-      from: 'SER Booking <onboarding@resend.dev>',
-      to: ['sergiodromeroo@gmail.com'],
+      from: 'SER Booking <booking@ser-music.com>',
+      to: ['unsergioromero@gmail.com'],
       subject: `🎤 Booking — ${data.nombre} · ${data.evento}`,
       html,
     }),
