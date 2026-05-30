@@ -23,7 +23,7 @@
     :root {
       --bg: #020C12;
       --accent-rgb: 0,180,216;
-      --day-gradient: radial-gradient(ellipse 110% 55% at 50% 0%, rgba(8,40,64,0.78) 0%, rgba(3,16,24,0.88) 40%, rgba(2,12,18,0.95) 75%);
+      --day-gradient: radial-gradient(ellipse 110% 55% at 50% 0%, #082840 0%, #031018 40%, #020C12 75%);
       --surface: #071520;
       --border: #0D2535;
       --text: #F5E8C8;
@@ -77,6 +77,55 @@
       width: 100%;
       padding-top: 6px;
       margin-bottom: 6px;
+    }
+
+    .rings {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -58%);
+      pointer-events: none;
+      width: 240px;
+      height: 240px;
+      opacity: 0.22;
+    }
+
+    .avatar-wrap {
+      position: relative;
+      margin-bottom: 14px;
+      z-index: 1;
+    }
+
+    .avatar-wrap::before {
+      content: '';
+      position: absolute;
+      inset: -32px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(var(--accent-rgb),0.35) 0%, transparent 65%);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .avatar {
+      position: relative;
+      z-index: 1;
+      width: 78px;
+      height: 78px;
+      border-radius: 50%;
+      object-fit: cover;
+      display: block;
+      border: 2px solid rgba(var(--accent-rgb),0.7);
+      filter: brightness(0.88) saturate(1.2) contrast(1.05);
+    }
+
+    .avatar-wrap::after {
+      content: '';
+      position: absolute;
+      inset: -8px;
+      border-radius: 50%;
+      border: 1px solid rgba(var(--accent-rgb),0.3);
+      pointer-events: none;
+      z-index: 0;
     }
 
     h1 {
@@ -235,18 +284,17 @@
       text-decoration: none;
       color: var(--text);
       background: linear-gradient(160deg, #1E1510 0%, #130E08 100%);
-      border: 1.5px solid rgba(255,255,255,0.18);
-      border-radius: 12px;
+      border: 1px solid var(--border);
+      border-radius: 10px;
       overflow: hidden;
-      box-shadow: 0 0 0 1px rgba(var(--accent-rgb),0.25), 0 24px 64px rgba(0,0,0,0.75), 0 0 48px rgba(0,0,0,0.5);
-      transition: border-color 0.2s, transform 0.18s, box-shadow 0.2s;
+      transition: border-color 0.2s, transform 0.15s, box-shadow 0.2s;
       -webkit-tap-highlight-color: transparent;
     }
 
     .album-card:hover {
-      border-color: rgba(255,255,255,0.32);
-      box-shadow: 0 0 0 1px rgba(var(--accent-rgb),0.5), 0 28px 72px rgba(0,0,0,0.85), 0 0 60px rgba(var(--accent-rgb),0.15);
-      transform: translateY(-4px);
+      border-color: rgba(var(--accent-rgb),0.5);
+      box-shadow: 0 8px 32px rgba(var(--accent-rgb),0.12);
+      transform: translateY(-3px);
     }
 
     .album-card img {
@@ -508,6 +556,8 @@
 
       h1 { font-size: 86px; }
 
+      .avatar { width: 94px; height: 94px; }
+
       .album-card { width: 280px; }
 
       .tracks-grid { grid-template-columns: repeat(4, 1fr); }
@@ -526,13 +576,6 @@
       .btn { width: 58px; }
 
       .ctab { width: 80px; }
-    }
-
-    .bg-art {
-      position: fixed;
-      inset: 0;
-      z-index: -1;
-      background: url('photos/ciclos.jpg') center/cover no-repeat;
     }
 
     #space-bg {
@@ -714,19 +757,19 @@
   (function(){
     var schemes = [
       // 0 Dom — coral
-      {a:'#FF6B6B',r:'255,107,107',g:'radial-gradient(ellipse 110% 55% at 50% 0%, rgba(61,16,16,0.78) 0%, rgba(24,5,5,0.88) 40%, rgba(14,3,3,0.95) 75%)'},
+      {a:'#FF6B6B',r:'255,107,107',g:'radial-gradient(ellipse 110% 55% at 50% 0%, #3D1010 0%, #180505 40%, #0E0303 75%)'},
       // 1 Lun — cyan
-      {a:'#00B4D8',r:'0,180,216',  g:'radial-gradient(ellipse 110% 55% at 50% 0%, rgba(8,40,64,0.78) 0%, rgba(3,16,24,0.88) 40%, rgba(2,12,18,0.95) 75%)'},
+      {a:'#00B4D8',r:'0,180,216',  g:'radial-gradient(ellipse 110% 55% at 50% 0%, #082840 0%, #031018 40%, #020C12 75%)'},
       // 2 Mar — púrpura
-      {a:'#A855F7',r:'168,85,247', g:'radial-gradient(ellipse 110% 55% at 50% 0%, rgba(26,8,48,0.78) 0%, rgba(13,4,24,0.88) 40%, rgba(8,2,16,0.95) 75%)'},
+      {a:'#A855F7',r:'168,85,247', g:'radial-gradient(ellipse 110% 55% at 50% 0%, #1A0830 0%, #0D0418 40%, #080210 75%)'},
       // 3 Mié — lila oscuro
-      {a:'#9D6FD6',r:'157,111,214',g:'radial-gradient(ellipse 110% 55% at 50% 0%, rgba(26,13,46,0.78) 0%, rgba(13,6,24,0.88) 40%, rgba(7,3,15,0.95) 75%)'},
+      {a:'#9D6FD6',r:'157,111,214',g:'radial-gradient(ellipse 110% 55% at 50% 0%, #1A0D2E 0%, #0D0618 40%, #07030F 75%)'},
       // 4 Jue — ámbar
-      {a:'#F59E0B',r:'245,158,11', g:'radial-gradient(ellipse 110% 55% at 50% 0%, rgba(42,24,0,0.78) 0%, rgba(18,9,0,0.88) 40%, rgba(8,5,0,0.95) 75%)'},
+      {a:'#F59E0B',r:'245,158,11', g:'radial-gradient(ellipse 110% 55% at 50% 0%, #2A1800 0%, #120900 40%, #080500 75%)'},
       // 5 Vie — rosa
-      {a:'#EC4899',r:'236,72,153', g:'radial-gradient(ellipse 110% 55% at 50% 0%, rgba(45,10,26,0.78) 0%, rgba(21,5,13,0.88) 40%, rgba(10,2,8,0.95) 75%)'},
+      {a:'#EC4899',r:'236,72,153', g:'radial-gradient(ellipse 110% 55% at 50% 0%, #2D0A1A 0%, #15050D 40%, #0A0208 75%)'},
       // 6 Sáb — índigo
-      {a:'#6366F1',r:'99,102,241', g:'radial-gradient(ellipse 110% 55% at 50% 0%, rgba(13,10,48,0.78) 0%, rgba(6,4,24,0.88) 40%, rgba(3,2,16,0.95) 75%)'},
+      {a:'#6366F1',r:'99,102,241', g:'radial-gradient(ellipse 110% 55% at 50% 0%, #0D0A30 0%, #060418 40%, #030210 75%)'},
     ];
     var s = schemes[new Date().getDay()];
     var root = document.documentElement;
@@ -739,12 +782,23 @@
   </script>
 </head>
 <body>
-<div class="bg-art"></div>
 <canvas id="space-bg"></canvas>
 <div class="page">
 
   <!-- Header -->
   <div class="header-wrap">
+    <svg class="rings" viewBox="0 0 340 340" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <circle cx="170" cy="170" r="62"  stroke="rgba(var(--accent-rgb),1)" stroke-width="1"/>
+      <circle cx="170" cy="170" r="96"  stroke="rgba(var(--accent-rgb),1)" stroke-width="0.8"/>
+      <circle cx="170" cy="170" r="130" stroke="rgba(var(--accent-rgb),1)" stroke-width="0.6"/>
+      <circle cx="170" cy="170" r="162" stroke="rgba(var(--accent-rgb),1)" stroke-width="0.5"/>
+      <circle cx="170" cy="170" r="166" stroke="rgba(var(--accent-rgb),1)" stroke-width="0.2"/>
+    </svg>
+    <div class="avatar-wrap">
+      <img class="avatar"
+           src="https://i.scdn.co/image/ab6761610000f1781d30e2a0c7f09cbcc17a88ab"
+           alt="SER" />
+    </div>
     <h1>SER</h1>
     <p class="meta">Barcelona &nbsp;&middot;&nbsp; Post Pop</p>
     <p class="tagline">Venezuelan flow en tierras Europeas</p>
@@ -754,12 +808,16 @@
   <div class="links-row">
   <div class="links">
     <a class="btn primary" href="https://open.spotify.com/artist/3HmC5My4nz020qQIu02JEw" target="_blank" rel="noopener noreferrer">
-      <svg class="btn-icon" viewBox="0 0 24 24" fill="none"><path d="M17.2 10.6c-3-1.8-8-2-10.9-1.1a.85.85 0 01-.5-1.6c3.3-1 8.7-.8 12.1 1.3a.85.85 0 01-.7 1.4zm-.1 2.8a.71.71 0 01-.98.22c-2.5-1.5-6.3-2-9.2-1.1a.71.71 0 01-.41-1.36c3.4-1 7.6-.5 10.5 1.25a.71.71 0 01.09.99zm-1.2 2.8a.57.57 0 01-.78.17c-2.2-1.3-4.9-1.6-8.1-.88a.57.57 0 01-.25-1.11c3.5-.8 6.6-.45 9.06.99a.57.57 0 01.08.83z" fill="white"/>
+      <svg class="btn-icon" viewBox="0 0 24 24" fill="none">
+        <circle cx="12" cy="12" r="12" fill="#1DB954"/>
+        <path d="M17.2 10.6c-3-1.8-8-2-10.9-1.1a.85.85 0 01-.5-1.6c3.3-1 8.7-.8 12.1 1.3a.85.85 0 01-.7 1.4zm-.1 2.8a.71.71 0 01-.98.22c-2.5-1.5-6.3-2-9.2-1.1a.71.71 0 01-.41-1.36c3.4-1 7.6-.5 10.5 1.25a.71.71 0 01.09.99zm-1.2 2.8a.57.57 0 01-.78.17c-2.2-1.3-4.9-1.6-8.1-.88a.57.57 0 01-.25-1.11c3.5-.8 6.6-.45 9.06.99a.57.57 0 01.08.83z" fill="white"/>
       </svg>
       <span class="btn-label">Spotify</span>
     </a>
     <a class="btn" href="https://www.youtube.com/channel/UCFc49vPKAq4PbUa3uRkyNZg" target="_blank" rel="noopener noreferrer">
-      <svg class="btn-icon" viewBox="0 0 24 24" fill="none"><path d="M19.6 8.4a2 2 0 00-1.4-1.4C16.9 6.6 12 6.6 12 6.6s-4.9 0-6.2.4A2 2 0 004.4 8.4C4 9.7 4 12 4 12s0 2.3.4 3.6a2 2 0 001.4 1.4c1.3.4 6.2.4 6.2.4s4.9 0 6.2-.4a2 2 0 001.4-1.4c.4-1.3.4-3.6.4-3.6s0-2.3-.4-3.6z" fill="white"/>
+      <svg class="btn-icon" viewBox="0 0 24 24" fill="none">
+        <circle cx="12" cy="12" r="12" fill="#FF0000"/>
+        <path d="M19.6 8.4a2 2 0 00-1.4-1.4C16.9 6.6 12 6.6 12 6.6s-4.9 0-6.2.4A2 2 0 004.4 8.4C4 9.7 4 12 4 12s0 2.3.4 3.6a2 2 0 001.4 1.4c1.3.4 6.2.4 6.2.4s4.9 0 6.2-.4a2 2 0 001.4-1.4c.4-1.3.4-3.6.4-3.6s0-2.3-.4-3.6z" fill="white"/>
         <path d="M10 14.5v-5l5 2.5-5 2.5z" fill="#FF0000"/>
       </svg>
       <span class="btn-label">YouTube</span>
@@ -776,7 +834,10 @@
           </radialGradient>
         </defs>
         <rect width="24" height="24" rx="6" fill="url(#ig)"/>
-        <rect x="6.5" y="6.5" width="11" height="11" rx="3" stroke="white" stroke-width="1.5" fill="none"/></svg>
+        <rect x="6.5" y="6.5" width="11" height="11" rx="3" stroke="white" stroke-width="1.5" fill="none"/>
+        <circle cx="12" cy="12" r="3" stroke="white" stroke-width="1.5" fill="none"/>
+        <circle cx="17" cy="7" r="0.8" fill="white"/>
+      </svg>
       <span class="btn-label">Instagram</span>
     </a>
     <a class="btn" href="https://www.tiktok.com/@unsergioromero" target="_blank" rel="noopener noreferrer">
