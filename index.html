@@ -89,6 +89,7 @@
       margin-bottom: 4px;
       color: #FFFFFF;
       text-shadow: 0 2px 20px rgba(0,0,0,1), 0 4px 40px rgba(0,0,0,0.9), 0 0 60px rgba(0,0,0,0.7);
+      filter: url(#text-grain);
     }
 
     .meta {
@@ -754,6 +755,19 @@
 </head>
 <body>
 <div class="bg-art"></div>
+<svg style="display:none" xmlns="http://www.w3.org/2000/svg">
+  <filter id="text-grain" x="-5%" y="-5%" width="110%" height="110%">
+    <feTurbulence type="fractalNoise" baseFrequency="0.80" numOctaves="4" stitchTiles="stitch" result="noise"/>
+    <feColorMatrix type="matrix"
+      values="0 0 0 0 0
+              0 0 0 0 0
+              0 0 0 0 0
+              0 0 0 -2 2.5"
+      in="noise" result="maskedNoise"/>
+    <feComposite operator="in" in="maskedNoise" in2="SourceGraphic" result="textNoise"/>
+    <feBlend in="SourceGraphic" in2="textNoise" mode="screen"/>
+  </filter>
+</svg>
 <canvas id="space-bg"></canvas>
 <div class="page">
 
