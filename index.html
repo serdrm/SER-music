@@ -528,6 +528,41 @@
     }
     .photo-lb-close:hover { opacity: 1; }
 
+    /* Discografía desplegable */
+    .discografia { border: none; margin-top: 8px; }
+    .discografia summary {
+      list-style: none;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      cursor: pointer;
+      padding: 12px 0;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 10px;
+      font-weight: 500;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--muted);
+      -webkit-tap-highlight-color: transparent;
+      user-select: none;
+      transition: color 0.2s;
+    }
+    .discografia summary::-webkit-details-marker { display: none; }
+    .discografia summary:hover { color: var(--accent); }
+    .discografia-arrow {
+      display: inline-block;
+      font-size: 14px;
+      transition: transform 0.25s;
+      line-height: 1;
+    }
+    .discografia[open] .discografia-arrow { transform: rotate(90deg); }
+    .discografia-body { animation: fadeSlide 0.25s ease; }
+    @keyframes fadeSlide {
+      from { opacity: 0; transform: translateY(-6px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
     /* Footer */
     .footer {
       margin-top: 60px;
@@ -893,6 +928,10 @@
     <p class="ctab-empty">Stay tuned.</p>
   </div>
 
+  <details class="discografia" id="discografia">
+    <summary><span>Discografía</span><span class="discografia-arrow">›</span></summary>
+    <div class="discografia-body">
+
   <!-- Album -->
   <div class="section">
     <p class="section-label">Álbum</p>
@@ -1068,6 +1107,9 @@
 
     </div>
   </div>
+
+    </div><!-- end discografia-body -->
+  </details><!-- end discografia -->
 
   <p class="footer">SER</p>
   <span class="footer-booking" onclick="openChat()">Fechas y booking &rarr;</span>
