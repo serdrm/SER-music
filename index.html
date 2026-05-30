@@ -584,9 +584,13 @@
 
     .bg-art {
       position: fixed;
-      inset: 0;
+      top: -20%;
+      left: 0;
+      right: 0;
+      height: 140%;
       z-index: -1;
       background: url('photos/fondo.jpg') center/cover no-repeat;
+      will-change: transform;
     }
 
 
@@ -1442,6 +1446,15 @@ if (localStorage.getItem('playerOpen') === '1') {
 } else {
   closePlayer();
 }
+
+// Parallax background
+(function(){
+  var bg = document.querySelector('.bg-art');
+  if (!bg) return;
+  window.addEventListener('scroll', function(){
+    bg.style.transform = 'translateY(' + (window.scrollY * 0.25) + 'px)';
+  }, { passive: true });
+})();
 </script>
 </body>
 </html>
