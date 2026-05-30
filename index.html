@@ -209,12 +209,13 @@
     .section-label {
       font-size: 9px;
       letter-spacing: 0.3em;
-      color: var(--muted);
+      color: rgba(255,255,255,0.7);
       text-transform: uppercase;
       margin-bottom: 10px;
       display: flex;
       align-items: center;
       gap: 10px;
+      text-shadow: 0 1px 8px rgba(0,0,0,1), 0 2px 16px rgba(0,0,0,0.9);
     }
 
     .section-label::before,
@@ -222,7 +223,7 @@
       content: '';
       flex: 1;
       height: 1px;
-      background: var(--border);
+      background: rgba(255,255,255,0.2);
     }
 
     /* Album */
@@ -489,7 +490,7 @@
     .footer {
       margin-top: 60px;
       font-size: 11px;
-      color: rgba(255,255,255,0.4);
+      color: rgba(255,255,255,0.75);
       letter-spacing: 0.15em;
       text-align: center;
       text-transform: uppercase;
@@ -712,13 +713,13 @@
     .footer-booking {
       margin-top: 8px;
       font-size: 11px;
-      color: var(--accent);
+      color: rgba(255,255,255,0.85);
       letter-spacing: 0.08em;
       cursor: pointer;
       text-transform: uppercase;
       text-decoration: none;
-      opacity: 0.85;
-      text-shadow: 0 1px 6px rgba(0,0,0,0.8);
+      opacity: 1;
+      text-shadow: 0 1px 8px rgba(0,0,0,1), 0 2px 16px rgba(0,0,0,0.9);
       transition: opacity 0.18s;
     }
     .footer-booking:hover { opacity: 1; }
