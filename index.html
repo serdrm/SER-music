@@ -23,7 +23,7 @@
     :root {
       --bg: #020C12;
       --accent-rgb: 0,180,216;
-      --day-gradient: radial-gradient(ellipse 110% 55% at 50% 0%, #082840 0%, #031018 40%, #020C12 75%);
+      --day-gradient: radial-gradient(ellipse 110% 55% at 50% 0%, rgba(8,40,64,0.78) 0%, rgba(3,16,24,0.88) 40%, rgba(2,12,18,0.95) 75%);
       --surface: #071520;
       --border: #0D2535;
       --text: #F5E8C8;
@@ -578,6 +578,13 @@
       .ctab { width: 80px; }
     }
 
+    .bg-art {
+      position: fixed;
+      inset: 0;
+      z-index: -1;
+      background: url('photos/ciclos.jpg') center/cover no-repeat;
+    }
+
     #space-bg {
       position: fixed;
       inset: 0;
@@ -757,19 +764,19 @@
   (function(){
     var schemes = [
       // 0 Dom — coral
-      {a:'#FF6B6B',r:'255,107,107',g:'radial-gradient(ellipse 110% 55% at 50% 0%, #3D1010 0%, #180505 40%, #0E0303 75%)'},
+      {a:'#FF6B6B',r:'255,107,107',g:'radial-gradient(ellipse 110% 55% at 50% 0%, rgba(61,16,16,0.78) 0%, rgba(24,5,5,0.88) 40%, rgba(14,3,3,0.95) 75%)'},
       // 1 Lun — cyan
-      {a:'#00B4D8',r:'0,180,216',  g:'radial-gradient(ellipse 110% 55% at 50% 0%, #082840 0%, #031018 40%, #020C12 75%)'},
+      {a:'#00B4D8',r:'0,180,216',  g:'radial-gradient(ellipse 110% 55% at 50% 0%, rgba(8,40,64,0.78) 0%, rgba(3,16,24,0.88) 40%, rgba(2,12,18,0.95) 75%)'},
       // 2 Mar — púrpura
-      {a:'#A855F7',r:'168,85,247', g:'radial-gradient(ellipse 110% 55% at 50% 0%, #1A0830 0%, #0D0418 40%, #080210 75%)'},
+      {a:'#A855F7',r:'168,85,247', g:'radial-gradient(ellipse 110% 55% at 50% 0%, rgba(26,8,48,0.78) 0%, rgba(13,4,24,0.88) 40%, rgba(8,2,16,0.95) 75%)'},
       // 3 Mié — lila oscuro
-      {a:'#9D6FD6',r:'157,111,214',g:'radial-gradient(ellipse 110% 55% at 50% 0%, #1A0D2E 0%, #0D0618 40%, #07030F 75%)'},
+      {a:'#9D6FD6',r:'157,111,214',g:'radial-gradient(ellipse 110% 55% at 50% 0%, rgba(26,13,46,0.78) 0%, rgba(13,6,24,0.88) 40%, rgba(7,3,15,0.95) 75%)'},
       // 4 Jue — ámbar
-      {a:'#F59E0B',r:'245,158,11', g:'radial-gradient(ellipse 110% 55% at 50% 0%, #2A1800 0%, #120900 40%, #080500 75%)'},
+      {a:'#F59E0B',r:'245,158,11', g:'radial-gradient(ellipse 110% 55% at 50% 0%, rgba(42,24,0,0.78) 0%, rgba(18,9,0,0.88) 40%, rgba(8,5,0,0.95) 75%)'},
       // 5 Vie — rosa
-      {a:'#EC4899',r:'236,72,153', g:'radial-gradient(ellipse 110% 55% at 50% 0%, #2D0A1A 0%, #15050D 40%, #0A0208 75%)'},
+      {a:'#EC4899',r:'236,72,153', g:'radial-gradient(ellipse 110% 55% at 50% 0%, rgba(45,10,26,0.78) 0%, rgba(21,5,13,0.88) 40%, rgba(10,2,8,0.95) 75%)'},
       // 6 Sáb — índigo
-      {a:'#6366F1',r:'99,102,241', g:'radial-gradient(ellipse 110% 55% at 50% 0%, #0D0A30 0%, #060418 40%, #030210 75%)'},
+      {a:'#6366F1',r:'99,102,241', g:'radial-gradient(ellipse 110% 55% at 50% 0%, rgba(13,10,48,0.78) 0%, rgba(6,4,24,0.88) 40%, rgba(3,2,16,0.95) 75%)'},
     ];
     var s = schemes[new Date().getDay()];
     var root = document.documentElement;
@@ -782,6 +789,7 @@
   </script>
 </head>
 <body>
+<div class="bg-art"></div>
 <canvas id="space-bg"></canvas>
 <div class="page">
 
@@ -898,7 +906,7 @@
     <p class="section-label">Álbum</p>
     <div class="album-section">
       <a class="album-card" href="https://open.spotify.com/album/5cK8pggREbBChbcaT2VK1F" target="_blank" rel="noopener noreferrer">
-        <img src="photos/ciclos.jpg" alt="CICLOS" loading="lazy" />
+        <img src="https://i.scdn.co/image/ab67616d0000b2737b53010fcb2c3e1c269bc7c2" alt="CICLOS" loading="lazy" />
         <div class="album-info">
           <span class="album-title">CICLOS</span>
           <span class="album-meta">2025</span>
