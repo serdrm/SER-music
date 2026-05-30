@@ -557,6 +557,18 @@
       text-transform: uppercase;
     }
 
+    /* ── Small phones (≤ 390px) ─────────────────── */
+    @media (max-width: 390px) {
+      h1 { font-size: 56px; }
+      .btn { width: 46px; padding: 6px 3px 5px; border-radius: 10px; }
+      .btn-icon { width: 18px; height: 18px; }
+      .btn-label { font-size: 8px; }
+      .links { gap: 7px; }
+      .links-row { gap: 7px; }
+      .ctab { width: 62px; font-size: 9px; padding: 8px 0; }
+      .tagline { font-size: 9px; letter-spacing: 0.14em; margin-bottom: 14px; }
+    }
+
     /* ── Desktop ─────────────────────────────────── */
     @media (min-width: 768px) {
       .page { max-width: 700px; }
@@ -1420,7 +1432,7 @@ function closePlayer() {
   var btn = document.getElementById('playerReopenBtn');
   if (player) player.style.display = 'none';
   if (btn) btn.style.display = 'flex';
-  localStorage.setItem('playerClosed', '1');
+  localStorage.removeItem('playerOpen');
 }
 
 function reopenPlayer() {
@@ -1428,11 +1440,15 @@ function reopenPlayer() {
   var btn = document.getElementById('playerReopenBtn');
   if (player) player.style.display = 'block';
   if (btn) btn.style.display = 'none';
-  localStorage.removeItem('playerClosed');
+  localStorage.setItem('playerOpen', '1');
 }
 
-// Restore closed state on load
-if (localStorage.getItem('playerClosed') === '1') closePlayer();
+// Player starts minimized by default; only show full player if user explicitly opened it
+if (localStorage.getItem('playerOpen') === '1') {
+  reopenPlayer();
+} else {
+  closePlayer();
+}
 </script>
 </body>
 </html>
