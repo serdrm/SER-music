@@ -332,16 +332,12 @@
 
     /* ── Content tabs ────────────────────────────── */
     .ctabs {
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-      width: 100%;
+      display: contents;
     }
 
     .ctab {
-      width: 100%;
-      padding: 10px 16px;
-      text-align: left;
+      padding: 9px 14px;
+      text-align: center;
       border-radius: 10px;
       border: 1px solid rgba(255,255,255,0.12);
       background: rgba(10,6,3,0.75);
@@ -490,6 +486,24 @@
     .photo-lb-close:hover { opacity: 1; }
 
 
+
+    /* ── Unified nav row ─────────────────────────── */
+    .nav-all {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      width: 100%;
+      justify-content: center;
+      margin-bottom: 8px;
+    }
+    .nav-all .ctab {
+      flex: 1;
+      min-width: 70px;
+      max-width: 140px;
+      text-align: center;
+      padding: 9px 8px;
+    }
+
     /* ── Acordeón discografía / videos ──────────── */
     .accordion {
       width: 100%;
@@ -596,7 +610,7 @@
 
       .btn { width: 58px; }
 
-      .ctab { width: 100%; }
+
     }
 
     .bg-art {
@@ -894,13 +908,14 @@
     </a>
   </div>
 
-  <!-- Content tabs -->
-  <div class="ctabs">
+  <!-- Nav row: all 5 buttons -->
+  <div class="nav-all">
     <button class="ctab" data-tab="shows" onclick="switchTab('shows')">Shows</button>
     <button class="ctab" data-tab="news" onclick="switchTab('news')">News</button>
     <button class="ctab booking-btn" onclick="openChat()">Booking</button>
+    <button class="ctab" onclick="toggleAccordion('acc-discog')">Discografía</button>
+    <button class="ctab" onclick="toggleAccordion('acc-videos')">Videos</button>
   </div>
-  </div><!-- end links-row -->
 
   <div class="ctab-panel" id="panel-shows">
     <details class="show-entry">
@@ -931,9 +946,6 @@
   </div>
 
   <div class="accordion" id="acc-discog">
-    <button class="accordion-toggle" onclick="toggleAccordion('acc-discog')">
-      <span>Discografía</span><span class="accordion-arrow">›</span>
-    </button>
     <div class="accordion-body">
   <div class="section">
     <p class="section-label">Álbum</p>
@@ -1015,7 +1027,7 @@
     </div><!-- end accordion-body discog -->
   </div><!-- end accordion discog -->
 
-  <div class="accordion" id="acc-videos">
+  <div class="accordion" id="acc-videos" style="position:relative">
     <button class="accordion-toggle" onclick="toggleAccordion('acc-videos')">
       <span>Videos</span><span class="accordion-arrow">›</span>
     </button>
