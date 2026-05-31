@@ -487,6 +487,54 @@
     }
     .photo-lb-close:hover { opacity: 1; }
 
+
+    /* ── Acordeón discografía / videos ──────────── */
+    .accordion {
+      width: 100%;
+      margin-bottom: 4px;
+    }
+
+    .accordion-toggle {
+      width: 100%;
+      background: none;
+      border: none;
+      border-top: 1px solid rgba(255,255,255,0.15);
+      border-bottom: 1px solid rgba(255,255,255,0.15);
+      padding: 14px 4px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      cursor: pointer;
+      color: rgba(255,255,255,0.7);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 9px;
+      font-weight: 500;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      text-shadow: 0 1px 8px rgba(0,0,0,1);
+      -webkit-tap-highlight-color: transparent;
+      transition: color 0.2s;
+    }
+    .accordion-toggle:hover { color: rgba(255,255,255,0.95); }
+
+    .accordion-arrow {
+      font-size: 16px;
+      transition: transform 0.3s ease;
+      line-height: 1;
+    }
+    .accordion.open .accordion-arrow { transform: rotate(90deg); }
+
+    .accordion-body {
+      display: none;
+      animation: fadeSlide 0.3s ease;
+    }
+    .accordion.open .accordion-body { display: block; }
+
+    @keyframes fadeSlide {
+      from { opacity: 0; transform: translateY(-8px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
     /* Footer */
     .footer {
       margin-top: 60px;
@@ -867,7 +915,11 @@
     <p class="ctab-empty">Stay tuned.</p>
   </div>
 
-  <!-- Album -->
+  <div class="accordion" id="acc-discog">
+    <button class="accordion-toggle" onclick="toggleAccordion('acc-discog')">
+      <span>Discografía</span><span class="accordion-arrow">›</span>
+    </button>
+    <div class="accordion-body">
   <div class="section">
     <p class="section-label">Álbum</p>
     <div class="album-section">
@@ -945,7 +997,14 @@
     </div>
   </div>
 
-  <!-- Videos -->
+    </div><!-- end accordion-body discog -->
+  </div><!-- end accordion discog -->
+
+  <div class="accordion" id="acc-videos">
+    <button class="accordion-toggle" onclick="toggleAccordion('acc-videos')">
+      <span>Videos</span><span class="accordion-arrow">›</span>
+    </button>
+    <div class="accordion-body">
   <div class="section">
     <p class="section-label">Videos</p>
     <div class="video-grid">
@@ -1042,6 +1101,9 @@
 
     </div>
   </div>
+
+    </div><!-- end accordion-body videos -->
+  </div><!-- end accordion videos -->
 
   <p class="footer">SER</p>
   <span class="footer-booking" onclick="openChat()">Fechas y booking &rarr;</span>
@@ -1401,6 +1463,12 @@ if (localStorage.getItem('playerOpen') === '1') {
   reopenPlayer();
 } else {
   closePlayer();
+}
+
+
+function toggleAccordion(id) {
+  var el = document.getElementById(id);
+  el.classList.toggle('open');
 }
 
 // Parallax background
