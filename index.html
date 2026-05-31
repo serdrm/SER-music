@@ -499,34 +499,35 @@
 
     .accordion-toggle {
       width: 100%;
-      background: rgba(0,0,0,0.45);
+      background: rgba(10,6,3,0.75);
       backdrop-filter: blur(12px);
       -webkit-backdrop-filter: blur(12px);
-      border: 1px solid rgba(255,255,255,0.2);
-      border-radius: 12px;
-      padding: 16px 20px;
+      border: 1px solid rgba(255,255,255,0.12);
+      border-radius: 10px;
+      padding: 10px 16px;
       display: flex;
       align-items: center;
       justify-content: space-between;
       cursor: pointer;
-      color: rgba(255,255,255,0.9);
+      color: rgba(255,255,255,0.7);
       font-family: 'DM Sans', sans-serif;
-      font-size: 11px;
-      font-weight: 600;
-      letter-spacing: 0.25em;
+      font-size: 10px;
+      font-weight: 500;
+      letter-spacing: 0.1em;
       text-transform: uppercase;
       text-shadow: 0 1px 8px rgba(0,0,0,1);
-      box-shadow: 0 8px 24px rgba(0,0,0,0.5);
+      box-shadow: 0 8px 24px rgba(0,0,0,0.6), 0 2px 8px rgba(0,0,0,0.4);
       -webkit-tap-highlight-color: transparent;
-      transition: background 0.2s, border-color 0.2s, box-shadow 0.2s;
+      transition: background 0.2s, border-color 0.2s, box-shadow 0.2s, color 0.2s;
     }
     .accordion-toggle:hover {
-      background: rgba(0,0,0,0.6);
-      border-color: rgba(255,255,255,0.4);
-      box-shadow: 0 12px 32px rgba(0,0,0,0.65);
+      border-color: rgba(255,255,255,0.25);
+      color: #fff;
+      box-shadow: 0 12px 32px rgba(0,0,0,0.75);
     }
     .accordion.open .accordion-toggle {
       border-color: rgba(var(--accent-rgb),0.5);
+      color: var(--accent);
       border-bottom-left-radius: 0;
       border-bottom-right-radius: 0;
     }
@@ -542,11 +543,6 @@
     .accordion-body {
       display: none;
       animation: fadeSlide 0.3s ease;
-      border: 1px solid rgba(var(--accent-rgb),0.3);
-      border-top: none;
-      border-radius: 0 0 12px 12px;
-      padding: 0 4px 4px;
-      background: rgba(0,0,0,0.25);
     }
     .accordion.open .accordion-body { display: block; }
 
