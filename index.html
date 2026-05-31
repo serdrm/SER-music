@@ -333,16 +333,15 @@
     /* ── Content tabs ────────────────────────────── */
     .ctabs {
       display: flex;
-      flex-direction: row;
+      flex-direction: column;
       gap: 8px;
       width: 100%;
-      justify-content: center;
     }
 
     .ctab {
-      flex: 1;
-      max-width: 120px;
-      padding: 10px 0;
+      width: 100%;
+      padding: 10px 16px;
+      text-align: left;
       border-radius: 10px;
       border: 1px solid rgba(255,255,255,0.12);
       background: rgba(10,6,3,0.75);
@@ -597,7 +596,7 @@
 
       .btn { width: 58px; }
 
-      .ctab { max-width: 140px; }
+      .ctab { width: 100%; }
     }
 
     .bg-art {
