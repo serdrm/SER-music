@@ -116,10 +116,11 @@
     /* Platform links */
     .links-row {
       display: flex;
-      align-items: flex-start;
-      gap: 10px;
+      flex-direction: column;
+      align-items: center;
+      gap: 16px;
       width: 100%;
-      margin-bottom: 4px;
+      margin-bottom: 8px;
     }
 
     .links {
@@ -332,14 +333,16 @@
     /* ── Content tabs ────────────────────────────── */
     .ctabs {
       display: flex;
-      flex-direction: column;
-      gap: 6px;
-      flex-shrink: 0;
+      flex-direction: row;
+      gap: 8px;
+      width: 100%;
+      justify-content: center;
     }
 
     .ctab {
-      width: 70px;
-      padding: 9px 0;
+      flex: 1;
+      max-width: 120px;
+      padding: 10px 0;
       border-radius: 10px;
       border: 1px solid rgba(255,255,255,0.12);
       background: rgba(10,6,3,0.75);
@@ -569,7 +572,7 @@
       .btn-icon { width: 26px; height: 26px; }
       .links { gap: 6px; }
       .links-row { gap: 6px; }
-      .ctab { width: 62px; font-size: 9px; padding: 8px 0; }
+      .ctab { font-size: 9px; padding: 8px 0; }
       .tagline { font-size: 9px; letter-spacing: 0.14em; margin-bottom: 14px; }
     }
 
@@ -598,7 +601,7 @@
 
       .btn { width: 58px; }
 
-      .ctab { width: 80px; }
+      .ctab { max-width: 140px; }
     }
 
     .bg-art {
