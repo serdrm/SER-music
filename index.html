@@ -152,6 +152,18 @@
 
     .btn-icon { flex-shrink: 0; width: 30px; height: 30px; filter: drop-shadow(0 4px 8px rgba(0,0,0,0.6)); }
     .btn-label { display: none; }
+    .btn-short { display: none; }
+    @media (max-width: 430px) {
+      .btn-full { display: none; }
+      .btn-short { display: inline; }
+      .nav-all .ctab {
+        font-size: 8px;
+        letter-spacing: 0.04em;
+        padding: 9px 4px;
+        min-width: 50px;
+      }
+    }
+
 
     /* Sticky player */
     .sticky-player {
@@ -913,7 +925,7 @@
   <div class="nav-all">
     <button class="ctab" data-tab="shows" onclick="switchTab('shows')">Shows</button>
     <button class="ctab" data-tab="news" onclick="switchTab('news')">News</button>
-    <button class="ctab" onclick="toggleAccordion('acc-discog')">Discografía</button>
+    <button class="ctab" onclick="toggleAccordion('acc-discog')"><span class="btn-full">Discografía</span><span class="btn-short">Disco</span></button>
     <button class="ctab" onclick="toggleAccordion('acc-videos')">Videos</button>
     <button class="ctab booking-btn" onclick="openChat()">Booking</button>
   </div>
