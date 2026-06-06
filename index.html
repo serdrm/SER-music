@@ -674,27 +674,13 @@
     }
 
 
-    /* ── Film grain overlay ─────────────────────── */
-    .grain-overlay {
+    #space-bg {
       position: fixed;
-      inset: -30%;
-      z-index: 2;
+      inset: 0;
+      z-index: 0;
+      width: 100%;
+      height: 100%;
       pointer-events: none;
-      opacity: 0.1;
-      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.72' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)'/%3E%3C/svg%3E");
-      background-size: 180px 180px;
-      animation: grain-move 0.55s steps(1) infinite;
-    }
-    @keyframes grain-move {
-      0%   { transform: translate(0%,   0%);   }
-      11%  { transform: translate(-6%,  -9%);  }
-      22%  { transform: translate(8%,   4%);   }
-      33%  { transform: translate(-4%, -18%);  }
-      44%  { transform: translate(12%,  7%);   }
-      55%  { transform: translate(-10%, 14%);  }
-      66%  { transform: translate(5%,  -6%);   }
-      77%  { transform: translate(-14%, 3%);   }
-      88%  { transform: translate(7%,  16%);   }
     }
 
     /* ── Videos ──────────────────────────────── */
@@ -908,7 +894,7 @@
     <feBlend in="SourceGraphic" in2="textNoise" mode="screen"/>
   </filter>
 </svg>
-<div class="grain-overlay"></div>
+<canvas id="space-bg"></canvas>
 <div class="page">
 
   <!-- Header -->
@@ -1265,6 +1251,99 @@
   </iframe>
 </div>
 
+
+<script>
+(function () {
+  const canvas = document.getElementById('space-bg');
+  const ctx = canvas.getContext('2d');
+
+  let smallStars = [];
+  let medStars = [];
+  let brightStars = [];
+  let scrollY = 0;
+  let rafId = null;
+
+  function buildStars(w, h) {
+    smallStars = Array.from({ length: 40 }, () => ({
+      x: Math.random() * w,
+      y: Math.random() * h,
+      r: 0.3 + Math.random() * 0.5,
+      a: 0.3 + Math.random() * 0.3,
+      blue: Math.random() > 0.7,
+    }));
+    medStars = Array.from({ length: 12 }, () => ({
+      x: Math.random() * w,
+      y: Math.random() * h,
+      r: 0.8 + Math.random() * 0.6,
+      a: 0.5 + Math.random() * 0.4,
+    }));
+    brightStars = Array.from({ length: 5 }, () => ({
+      x: Math.random() * w,
+      y: Math.random() * h,
+      r: 1.5 + Math.random() * 0.5,
+      spike: 4 + Math.random() * 2,
+    }));
+  }
+
+  function draw() {
+    const w = window.innerWidth;
+    const h = window.innerHeight;
+    const scroll = scrollY;
+    ctx.clearRect(0, 0, w, h);
+    const farOff = scroll * 0.08;
+    smallStars.forEach(s => {
+      const y = ((s.y - farOff) % h + h) % h;
+      ctx.beginPath();
+      ctx.arc(s.x, y, s.r, 0, Math.PI * 2);
+      ctx.fillStyle = s.blue ? `rgba(200,220,255,${s.a})` : `rgba(245,240,230,${s.a})`;
+      ctx.fill();
+    });
+    medStars.forEach(s => {
+      const y = ((s.y - farOff) % h + h) % h;
+      ctx.beginPath();
+      ctx.arc(s.x, y, s.r, 0, Math.PI * 2);
+      ctx.fillStyle = `rgba(245,240,230,${s.a})`;
+      ctx.fill();
+    });
+    const nearOff = scroll * 0.2;
+    brightStars.forEach(s => {
+      const y = ((s.y - nearOff) % h + h) % h;
+      ctx.save();
+      ctx.translate(s.x, y);
+      ctx.fillStyle = 'rgba(255,248,235,0.95)';
+      ctx.beginPath();
+      ctx.arc(0, 0, s.r, 0, Math.PI * 2);
+      ctx.fill();
+      const sp = s.spike;
+      ctx.strokeStyle = 'rgba(255,248,235,0.4)';
+      ctx.lineWidth = 0.5;
+      ctx.beginPath(); ctx.moveTo(-sp, 0); ctx.lineTo(sp, 0); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(0, -sp); ctx.lineTo(0, sp); ctx.stroke();
+      ctx.restore();
+    });
+  }
+
+  function tick() { draw(); rafId = null; }
+  function scheduleFrame() { if (!rafId) rafId = requestAnimationFrame(tick); }
+
+  function resize() {
+    const dpr = window.devicePixelRatio || 1;
+    const w = window.innerWidth;
+    const h = window.innerHeight;
+    canvas.width = w * dpr;
+    canvas.height = h * dpr;
+    canvas.style.width = w + 'px';
+    canvas.style.height = h + 'px';
+    ctx.scale(dpr, dpr);
+    buildStars(w, h);
+    scheduleFrame();
+  }
+
+  window.addEventListener('scroll', () => { scrollY = window.scrollY; scheduleFrame(); }, { passive: true });
+  window.addEventListener('resize', resize);
+  resize();
+})();
+</script>
 
 <script>
 /* ── Video modal ─────────────────────────────── */
