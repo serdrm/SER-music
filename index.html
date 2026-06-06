@@ -639,14 +639,27 @@
     }
 
 
-    /* ── Pixel-block glitch canvas ──────────────── */
-    #glitch-canvas {
+    /* ── Film grain overlay ─────────────────────── */
+    .grain-overlay {
       position: fixed;
-      inset: 0;
-      z-index: 0;
+      inset: -30%;
+      z-index: 2;
       pointer-events: none;
-      width: 100%;
-      height: 100%;
+      opacity: 0.1;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.72' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)'/%3E%3C/svg%3E");
+      background-size: 180px 180px;
+      animation: grain-move 0.55s steps(1) infinite;
+    }
+    @keyframes grain-move {
+      0%   { transform: translate(0%,   0%);   }
+      11%  { transform: translate(-6%,  -9%);  }
+      22%  { transform: translate(8%,   4%);   }
+      33%  { transform: translate(-4%, -18%);  }
+      44%  { transform: translate(12%,  7%);   }
+      55%  { transform: translate(-10%, 14%);  }
+      66%  { transform: translate(5%,  -6%);   }
+      77%  { transform: translate(-14%, 3%);   }
+      88%  { transform: translate(7%,  16%);   }
     }
 
     /* ── Videos ──────────────────────────────── */
@@ -860,7 +873,7 @@
     <feBlend in="SourceGraphic" in2="textNoise" mode="screen"/>
   </filter>
 </svg>
-<canvas id="glitch-canvas"></canvas>
+<div class="grain-overlay"></div>
 <div class="page">
 
   <!-- Header -->
@@ -1203,105 +1216,6 @@
   </iframe>
 </div>
 
-<script>
-/* ── Pixel-block glitch engine ──────────────── */
-(function(){
-  var canvas = document.getElementById('glitch-canvas');
-  var ctx    = canvas.getContext('2d');
-  var img    = new Image();
-  var imgReady = false;
-  var active   = false;
-  var BLOCK    = 18; // macroblock size in css-pixels
-
-  /* Size canvas to viewport */
-  function resize() {
-    var dpr = window.devicePixelRatio || 1;
-    var w = window.innerWidth;
-    var h = window.innerHeight;
-    canvas.width  = w * dpr;
-    canvas.height = h * dpr;
-    canvas.style.width  = w + 'px';
-    canvas.style.height = h + 'px';
-    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-  }
-  window.addEventListener('resize', resize);
-  resize();
-
-  /* Load background image so we can sample it */
-  img.crossOrigin = 'anonymous';
-  img.onload = function(){ imgReady = true; };
-  img.src = 'photos/fondo.jpg';
-
-  /* Draw one glitch frame: N displaced macroblocks */
-  function drawFrame() {
-    if (!imgReady) return;
-    var w = window.innerWidth;
-    var h = window.innerHeight;
-    ctx.clearRect(0, 0, w, h);
-
-    /* Cover-fit: same math as CSS background-size:cover */
-    var iw = img.width, ih = img.height;
-    var scale = Math.max(w / iw, h / ih);
-    var sw = iw * scale, sh = ih * scale;
-    var ox = (w - sw) / 2, oy = (h - sh) / 2;
-
-    var cols = Math.floor(w / BLOCK);
-    var rows = Math.floor(h / BLOCK);
-    var n    = 6 + Math.floor(Math.random() * 14); /* blocks per frame */
-
-    for (var i = 0; i < n; i++) {
-      /* Random block origin snapped to grid */
-      var gx = Math.floor(Math.random() * cols) * BLOCK;
-      var gy = Math.floor(Math.random() * rows) * BLOCK;
-      /* Random block size (1–8 cols wide, 1–3 rows tall) */
-      var gw = (1 + Math.floor(Math.random() * 8)) * BLOCK;
-      var gh = (1 + Math.floor(Math.random() * 3)) * BLOCK;
-      gw = Math.min(gw, w - gx);
-      gh = Math.min(gh, h - gy);
-
-      /* Displacement snapped to block grid */
-      var dx = (Math.floor(Math.random() * 9) - 4) * BLOCK;
-      var dy = (Math.floor(Math.random() * 3) - 1) * BLOCK;
-
-      /* Clip to this block and draw the image shifted by (dx,dy) */
-      ctx.save();
-      ctx.beginPath();
-      ctx.rect(gx, gy, gw, gh);
-      ctx.clip();
-      ctx.drawImage(img, ox + dx, oy + dy, sw, sh);
-      ctx.restore();
-    }
-  }
-
-  /* Fire a burst: alternate draw/clear for a few frames */
-  function fire() {
-    if (active) return;
-    active = true;
-    var step  = 0;
-    var total = 3 + Math.floor(Math.random() * 4); /* 3–6 frames */
-
-    function next() {
-      if (step >= total) {
-        ctx.clearRect(0, 0, window.innerWidth, window.innerHeight);
-        active = false;
-        /* 20 % chance of a quick second burst */
-        if (Math.random() < 0.2) setTimeout(fire, 50 + Math.random() * 80);
-        return;
-      }
-      if (step % 2 === 0) drawFrame(); else ctx.clearRect(0, 0, window.innerWidth, window.innerHeight);
-      step++;
-      setTimeout(next, 55 + Math.random() * 35);
-    }
-    next();
-  }
-
-  /* Schedule recurring glitches every 5–13 s */
-  function schedule() {
-    setTimeout(function(){ fire(); schedule(); }, 5000 + Math.random() * 8000);
-  }
-  setTimeout(function(){ fire(); schedule(); }, 1800 + Math.random() * 1500);
-})();
-</script>
 
 <script>
 /* ── Video modal ─────────────────────────────── */
