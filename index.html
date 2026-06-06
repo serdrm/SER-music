@@ -639,13 +639,65 @@
     }
 
 
-    #space-bg {
+    /* ── Glitch RGB layers ──────────────────────── */
+    .bg-art::before,
+    .bg-art::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: url('photos/fondo.jpg') center/cover no-repeat;
+      opacity: 0;
+      pointer-events: none;
+    }
+    .bg-art::before { mix-blend-mode: screen; }
+    .bg-art::after  { mix-blend-mode: screen; }
+
+    @keyframes glitch-a {
+      0%   { opacity:.55; transform:translateX(-9px); clip-path:inset(12% 0 58% 0); filter:hue-rotate(-40deg) saturate(3); }
+      20%  { clip-path:inset(62% 0 8% 0);  transform:translateX(7px); }
+      40%  { clip-path:inset(30% 0 42% 0); transform:translateX(-5px); }
+      60%  { clip-path:inset(78% 0 3% 0);  transform:translateX(9px); }
+      80%  { clip-path:inset(5% 0 72% 0);  transform:translateX(-6px); }
+      100% { opacity:0; transform:translateX(0); clip-path:inset(50% 0 50% 0); filter:none; }
+    }
+    @keyframes glitch-b {
+      0%   { opacity:.45; transform:translateX(8px);  clip-path:inset(55% 0 15% 0); filter:hue-rotate(160deg) saturate(3); }
+      25%  { clip-path:inset(20% 0 60% 0); transform:translateX(-7px); }
+      50%  { clip-path:inset(70% 0 12% 0); transform:translateX(5px); }
+      75%  { clip-path:inset(8% 0 68% 0);  transform:translateX(-9px); }
+      100% { opacity:0; transform:translateX(0); clip-path:inset(50% 0 50% 0); filter:none; }
+    }
+    @keyframes glitch-flash {
+      0%,100% { opacity:0; }
+      10%,30%,70% { opacity:.04; }
+      50% { opacity:.07; }
+    }
+    .bg-art.glitch-active::before { animation: glitch-a .32s steps(5) forwards; }
+    .bg-art.glitch-active::after  { animation: glitch-b .28s steps(4) forwards; }
+
+    /* Scanlines overlay */
+    .scanlines {
       position: fixed;
       inset: 0;
       z-index: 0;
-      width: 100%;
-      height: 100%;
       pointer-events: none;
+      background: repeating-linear-gradient(
+        to bottom,
+        transparent 0px,
+        transparent 3px,
+        rgba(0,0,0,0.06) 3px,
+        rgba(0,0,0,0.06) 4px
+      );
+    }
+    .scanlines.glitch-active {
+      animation: glitch-flash .32s steps(3) forwards;
+      background: repeating-linear-gradient(
+        to bottom,
+        transparent 0px,
+        transparent 2px,
+        rgba(0,0,0,0.12) 2px,
+        rgba(0,0,0,0.12) 3px
+      );
     }
 
     /* ── Videos ──────────────────────────────── */
@@ -859,7 +911,7 @@
     <feBlend in="SourceGraphic" in2="textNoise" mode="screen"/>
   </filter>
 </svg>
-<canvas id="space-bg"></canvas>
+<div class="scanlines" id="scanlines"></div>
 <div class="page">
 
   <!-- Header -->
@@ -1203,111 +1255,41 @@
 </div>
 
 <script>
-(function () {
-  const canvas = document.getElementById('space-bg');
-  const ctx = canvas.getContext('2d');
+/* ── Glitch engine ─────────────────────────── */
+(function(){
+    var bg = document.querySelector('.bg-art');
+    var sl = document.getElementById('scanlines');
+    var active = false;
+    var tid;
 
-  let smallStars = [];
-  let medStars = [];
-  let brightStars = [];
-  let scrollY = 0;
-  let rafId = null;
+    function fire() {
+      if (active) return;
+      active = true;
+      bg.classList.add('glitch-active');
+      sl.classList.add('glitch-active');
+      // Occasionally do a double-glitch
+      var dur = 320 + Math.random() * 80;
+      tid = setTimeout(function(){
+        bg.classList.remove('glitch-active');
+        sl.classList.remove('glitch-active');
+        active = false;
+        // 25% chance of a quick second hit
+        if (Math.random() < 0.25) {
+          setTimeout(fire, 60 + Math.random() * 120);
+        }
+      }, dur);
+    }
 
-  function buildStars(w, h) {
-    smallStars = Array.from({ length: 40 }, () => ({
-      x: Math.random() * w,
-      y: Math.random() * h,
-      r: 0.3 + Math.random() * 0.5,
-      a: 0.3 + Math.random() * 0.3,
-      blue: Math.random() > 0.7,
-    }));
-    medStars = Array.from({ length: 12 }, () => ({
-      x: Math.random() * w,
-      y: Math.random() * h,
-      r: 0.8 + Math.random() * 0.6,
-      a: 0.5 + Math.random() * 0.4,
-    }));
-    brightStars = Array.from({ length: 5 }, () => ({
-      x: Math.random() * w,
-      y: Math.random() * h,
-      r: 1.5 + Math.random() * 0.5,
-      spike: 4 + Math.random() * 2,
-    }));
-  }
+    function schedule() {
+      // Random interval: 4–12 seconds between glitches
+      setTimeout(function(){
+        fire();
+        schedule();
+      }, 4000 + Math.random() * 8000);
+    }
 
-  function draw() {
-    const w = window.innerWidth;
-    const h = window.innerHeight;
-    const scroll = scrollY;
-
-    ctx.clearRect(0, 0, w, h);
-
-    const farOff = scroll * 0.08;
-    smallStars.forEach(s => {
-      const y = ((s.y - farOff) % h + h) % h;
-      ctx.beginPath();
-      ctx.arc(s.x, y, s.r, 0, Math.PI * 2);
-      ctx.fillStyle = s.blue
-        ? `rgba(200,220,255,${s.a})`
-        : `rgba(245,240,230,${s.a})`;
-      ctx.fill();
-    });
-
-    medStars.forEach(s => {
-      const y = ((s.y - farOff) % h + h) % h;
-      ctx.beginPath();
-      ctx.arc(s.x, y, s.r, 0, Math.PI * 2);
-      ctx.fillStyle = `rgba(245,240,230,${s.a})`;
-      ctx.fill();
-    });
-
-    const nearOff = scroll * 0.2;
-    brightStars.forEach(s => {
-      const y = ((s.y - nearOff) % h + h) % h;
-      ctx.save();
-      ctx.translate(s.x, y);
-      ctx.fillStyle = 'rgba(255,248,235,0.97)';
-      ctx.beginPath();
-      ctx.arc(0, 0, s.r, 0, Math.PI * 2);
-      ctx.fill();
-      const sp = s.spike;
-      ctx.strokeStyle = 'rgba(255,248,235,0.4)';
-      ctx.lineWidth = 0.5;
-      ctx.beginPath(); ctx.moveTo(-sp, 0); ctx.lineTo(sp, 0); ctx.stroke();
-      ctx.beginPath(); ctx.moveTo(0, -sp); ctx.lineTo(0, sp); ctx.stroke();
-      ctx.restore();
-    });
-  }
-
-  function tick() {
-    draw();
-    rafId = null;
-  }
-
-  function scheduleFrame() {
-    if (!rafId) rafId = requestAnimationFrame(tick);
-  }
-
-  function resize() {
-    const dpr = window.devicePixelRatio || 1;
-    const w = window.innerWidth;
-    const h = window.innerHeight;
-    canvas.width = w * dpr;
-    canvas.height = h * dpr;
-    canvas.style.width = w + 'px';
-    canvas.style.height = h + 'px';
-    ctx.scale(dpr, dpr);
-    buildStars(w, h);
-    scheduleFrame();
-  }
-
-  window.addEventListener('scroll', () => {
-    scrollY = window.scrollY;
-    scheduleFrame();
-  }, { passive: true });
-
-  window.addEventListener('resize', resize);
-  resize();
+    // First glitch after 1.5–3s on load
+    setTimeout(function(){ fire(); schedule(); }, 1500 + Math.random() * 1500);
 })();
 </script>
 
