@@ -381,9 +381,44 @@
       box-shadow: 0 12px 32px rgba(0,0,0,0.75);
     }
 
-    .ctab.booking-btn {
+    .ctab.prensa-btn {
       color: rgba(255,255,255,0.7);
-      margin-top: 4px;
+    }
+
+    /* EPK download button */
+    .epk-panel {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 12px;
+      padding: 20px 0 8px;
+    }
+    .epk-download-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 14px 28px;
+      background: rgba(255,255,255,0.08);
+      border: 1px solid rgba(255,255,255,0.18);
+      border-radius: 12px;
+      color: #fff;
+      font-size: 13px;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      text-decoration: none;
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      box-shadow: 0 8px 24px rgba(0,0,0,0.5);
+      transition: background 0.2s, transform 0.15s;
+    }
+    .epk-download-btn:hover { background: rgba(255,255,255,0.14); transform: translateY(-1px); }
+    .epk-download-btn:active { transform: translateY(0); }
+    .epk-download-btn svg { flex-shrink: 0; }
+    .epk-hint {
+      font-size: 11px;
+      color: rgba(255,255,255,0.35);
+      letter-spacing: 0.04em;
     }
 
     .ctab-panel {
@@ -942,7 +977,21 @@
     <button class="ctab" data-tab="news" onclick="switchTab('news')">News</button>
     <button class="ctab" onclick="toggleAccordion('acc-discog')"><span class="btn-full">Discografía</span><span class="btn-short">Disco</span></button>
     <button class="ctab" onclick="toggleAccordion('acc-videos')">Videos</button>
-    <button class="ctab booking-btn" onclick="openChat()">Booking</button>
+    <button class="ctab prensa-btn" data-tab="prensa" onclick="switchTab('prensa')">Prensa</button>
+  </div>
+
+  <div class="ctab-panel" id="panel-prensa">
+    <div class="epk-panel">
+      <a class="epk-download-btn" href="assets/SER_EPK_2026.pdf" download="SER_EPK_2026.pdf">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/>
+          <polyline points="7 10 12 15 17 10"/>
+          <line x1="12" y1="15" x2="12" y2="3"/>
+        </svg>
+        Descargar EPK
+      </a>
+      <span class="epk-hint">Electronic Press Kit · PDF · 2026</span>
+    </div>
   </div>
 
   <div class="ctab-panel" id="panel-shows">
