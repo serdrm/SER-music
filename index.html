@@ -80,6 +80,16 @@
       margin-bottom: 6px;
     }
 
+    /* ── Entrada escalonada ─────────────────────── */
+    @keyframes enter-up {
+      from { opacity: 0; transform: translateY(30px); }
+      to   { opacity: 1; transform: translateY(0);    }
+    }
+    @keyframes enter-up-title {
+      from { opacity: 0; transform: translateY(36px) scale(0.96); }
+      to   { opacity: 1; transform: translateY(0)    scale(1);    }
+    }
+
     h1 {
       font-family: 'Big Shoulders Display', sans-serif;
       font-size: 96px;
@@ -91,7 +101,12 @@
       color: #FFFFFF;
       text-shadow: 0 2px 20px rgba(0,0,0,1), 0 4px 40px rgba(0,0,0,0.9), 0 0 60px rgba(0,0,0,0.7);
       filter: url(#text-grain);
+      animation: enter-up-title 0.9s cubic-bezier(0.16,1,0.3,1) 0.05s both;
     }
+    .meta    { animation: enter-up 0.7s cubic-bezier(0.16,1,0.3,1) 0.3s  both; }
+    .tagline { animation: enter-up 0.7s cubic-bezier(0.16,1,0.3,1) 0.45s both; }
+    .links-row { animation: enter-up 0.7s cubic-bezier(0.16,1,0.3,1) 0.62s both; }
+    .nav-all   { animation: enter-up 0.7s cubic-bezier(0.16,1,0.3,1) 0.8s  both; }
 
     .meta {
       font-size: 10px;
