@@ -894,16 +894,11 @@
     .album-card, .track {
       cursor: pointer;
     }
-    .spotify-expand {
-      display: none;
-      width: 100%;
-      grid-column: 1 / -1;
-      margin-top: 0;
-      border-radius: 10px;
-      overflow: hidden;
-      animation: fadeIn 0.2s ease;
+    .spotify-expand { display: none !important; }
+    .track.playing {
+      outline: 2px solid var(--accent);
+      outline-offset: -2px;
     }
-    .spotify-expand.open { display: block; }
     .spotify-expand iframe { display: block; border: none; border-radius: 10px; }
     .spotify-open-link {
       display: block;
@@ -1655,26 +1650,22 @@ function handleSomos(e) {
 }
 
 function toggleSpotify(type, id, el) {
-  const expandId = 'sp-' + type + '-' + id;
-  const expand = document.getElementById(expandId);
-  if (!expand) return;
+  // Load track into sticky player and show it
+  const player = document.getElementById('stickyPlayer');
+  const btn = document.getElementById('playerReopenBtn');
+  const iframe = player ? player.querySelector('iframe') : null;
+  if (!iframe) return;
 
-  const isOpen = expand.classList.contains('open');
+  // Highlight selected track, remove from others
+  document.querySelectorAll('.track.playing').forEach(t => t.classList.remove('playing'));
+  if (el) el.classList.add('playing');
 
-  // Close all open embeds
-  document.querySelectorAll('.spotify-expand.open').forEach(e => {
-    e.classList.remove('open');
-    const iframe = e.querySelector('iframe');
-    if (iframe) iframe.src = '';
-  });
+  // Load into sticky player
+  iframe.src = 'https://open.spotify.com/embed/' + type + '/' + id + '?utm_source=generator&theme=0&autoplay=1';
 
-  if (!isOpen) {
-    expand.classList.add('open');
-    const iframe = expand.querySelector('iframe');
-    if (iframe) {
-      iframe.src = 'https://open.spotify.com/embed/' + type + '/' + id + '?utm_source=generator&theme=0';
-    }
-  }
+  // Show player if hidden
+  if (player) { player.style.display = ''; player.style.opacity = '1'; }
+  if (btn) btn.style.display = 'none';
 }
 
 function openChat() {
