@@ -1650,21 +1650,27 @@ function handleSomos(e) {
 }
 
 function toggleSpotify(type, id, el) {
-  // Load track into sticky player and show it
   const player = document.getElementById('stickyPlayer');
   const btn = document.getElementById('playerReopenBtn');
-  const iframe = player ? player.querySelector('iframe') : null;
-  if (!iframe) return;
+  if (!player) return;
 
-  // Highlight selected track, remove from others
   document.querySelectorAll('.track.playing').forEach(t => t.classList.remove('playing'));
   if (el) el.classList.add('playing');
 
-  // Load into sticky player
+  // Recrear el iframe para que el navegador permita autoplay
+  const old = player.querySelector('iframe');
+  if (old) old.remove();
+  const iframe = document.createElement('iframe');
   iframe.src = 'https://open.spotify.com/embed/' + type + '/' + id + '?utm_source=generator&theme=0&autoplay=1';
+  iframe.width = '100%';
+  iframe.frameBorder = '0';
+  iframe.allow = 'autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture';
+  iframe.style.display = 'block';
+  iframe.style.borderRadius = '8px';
+  player.appendChild(iframe);
 
-  // Show player if hidden
-  if (player) { player.style.display = ''; player.style.opacity = '1'; }
+  player.style.display = '';
+  player.style.opacity = '1';
   if (btn) btn.style.display = 'none';
 }
 
