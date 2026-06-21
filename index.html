@@ -205,7 +205,7 @@
     .sticky-player iframe {
       display: block;
       border-radius: 8px;
-      height: 100px;
+      height: 80px;
     }
 
     .player-reopen-btn {
@@ -1667,6 +1667,7 @@ function toggleSpotify(type, id, el) {
   iframe.allow = 'autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture';
   iframe.style.display = 'block';
   iframe.style.borderRadius = '8px';
+  iframe.style.height = (type === 'album') ? '232px' : '80px';
   player.appendChild(iframe);
 
   player.style.display = '';
