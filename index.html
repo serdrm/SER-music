@@ -1719,7 +1719,56 @@ window.onSpotifyIframeApiReady = function(IFrameAPI) {
   });
 };
 
-const _linksCache = {};
+const _linksCache = {
+  // Intenso
+  '3YMk6KgEnU3yXVDps8KNZJ': {
+    youtubeMusic: '',
+    tidal: '',
+    appleMusic: 'https://music.apple.com/es/album/intenso/1893216291?i=6762168568&l=en-GB',
+  },
+  // El Temblor
+  '0V66nFtV6uEhunlEbeV9jb': {
+    youtubeMusic: '',
+    tidal: '',
+    appleMusic: 'https://music.apple.com/es/album/el-temblor/1717661864?i=1717661865&l=en-GB',
+  },
+  // Algo más
+  '4M51il37kdM1IbY0tXJFh7': {
+    youtubeMusic: 'https://music.youtube.com/watch?v=GpT9bbvRpyI&si=tSC1niFT3W_rkr6e',
+    tidal: 'https://tidal.com/track/341183887/u',
+    appleMusic: 'https://music.apple.com/es/album/algo-m%C3%A1s/1727871744?i=1727871745&l=en-GB',
+  },
+  // Verte
+  '278EZRg1t3ZbEIKZYotY91': {
+    youtubeMusic: 'https://music.youtube.com/watch?v=ar2RUD4eJJc&si=cGMih2TDh96lgOZN',
+    tidal: 'https://tidal.com/track/465536765/u',
+    appleMusic: 'https://music.apple.com/es/album/verte/1734815715?i=1734815716&l=en-GB',
+  },
+  // Llévame
+  '42H5HVm8sUD4LCKPwIzFpA': {
+    youtubeMusic: '',
+    tidal: '',
+    appleMusic: 'https://music.apple.com/es/album/ll%C3%A9vame/1765716117?i=1765716118&l=en-GB',
+  },
+  // ¿Qué quieres?
+  '7Dgm8Joje35WiV9NmqZQgX': {
+    youtubeMusic: '',
+    tidal: 'https://tidal.com/track/465766156/u',
+    appleMusic: 'https://music.apple.com/es/album/qu%C3%A9-quieres-de-m%C3%AD/1844979314?i=1844979472&l=en-GB',
+  },
+  // Sigo ahí
+  '3Dc0QFgcIJMwpdk7joyI2x': {
+    youtubeMusic: '',
+    tidal: '',
+    appleMusic: 'https://music.apple.com/es/album/sigo-ah%C3%AD/1844979314?i=1844979473&l=en-GB',
+  },
+  // CICLOS album
+  '5cK8pggREbBChbcaT2VK1F': {
+    youtubeMusic: 'https://music.youtube.com/playlist?list=OLAK5uy_nKY_mA9vTpl-zLA_BkooSEE8XSnhCThOM&si=rZLFORS2WTCcfFeV',
+    tidal: 'https://tidal.com/album/465766148/u',
+    appleMusic: 'https://music.apple.com/es/album/ciclos/1844979314?l=en-GB',
+  },
+};
 
 function toggleSpotify(type, id, el) {
   const titleEl = el ? (el.querySelector('.track-title') || el.querySelector('.album-title')) : null;
