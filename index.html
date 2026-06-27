@@ -7,6 +7,7 @@
   <meta name="description" content="Venezuelan flow en tierras Europeas. Post Pop desde Barcelona." />
   <link rel="canonical" href="https://www.ser-music.com" />
   <script defer src="/_vercel/insights/script.js"></script>
+  <script src="https://open.spotify.com/embed/iframe-api/v1" async></script>
   <meta property="og:title" content="SER — Post Pop desde Barcelona" />
   <meta property="og:description" content="Venezuelan flow en tierras Europeas. Post Pop desde Barcelona." />
   <meta property="og:url" content="https://www.ser-music.com" />
@@ -1476,14 +1477,7 @@
 
 <div class="sticky-player" id="stickyPlayer">
   <button onclick="closePlayer()" style="position:absolute;top:6px;right:8px;background:none;border:none;color:rgba(255,255,255,0.4);font-size:14px;cursor:pointer;line-height:1;z-index:1;">✕</button>
-  <iframe
-    src="https://open.spotify.com/embed/artist/3HmC5My4nz020qQIu02JEw?utm_source=generator&theme=0"
-    width="100%"
-    height="80"
-    frameborder="0"
-    allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
-    loading="lazy">
-  </iframe>
+  <div id="spotify-embed-container"></div>
 </div>
 
 
@@ -1649,30 +1643,24 @@ function handleSomos(e) {
   });
 }
 
+var spotifyController = null;
+var spotifyApiReady = false;
+
+window.onSpotifyIframeApiReady = function(IFrameAPI) {
+  spotifyApiReady = true;
+  var container = document.getElementById('spotify-embed-container');
+  if (!container) return;
+  IFrameAPI.createController(container, {
+    width: '100%',
+    height: '80',
+    uri: 'spotify:artist:3HmC5My4nz020qQIu02JEw'
+  }, function(EmbedController) {
+    spotifyController = EmbedController;
+  });
+};
+
 function toggleSpotify(type, id, el) {
-  const player = document.getElementById('stickyPlayer');
-  const btn = document.getElementById('playerReopenBtn');
-  if (!player) return;
-
-  document.querySelectorAll('.track.playing').forEach(t => t.classList.remove('playing'));
-  if (el) el.classList.add('playing');
-
-  // Recrear el iframe para que el navegador permita autoplay
-  const old = player.querySelector('iframe');
-  if (old) old.remove();
-  const iframe = document.createElement('iframe');
-  iframe.src = 'https://open.spotify.com/embed/' + type + '/' + id + '?utm_source=generator&theme=0&autoplay=1';
-  iframe.width = '100%';
-  iframe.frameBorder = '0';
-  iframe.allow = 'autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture';
-  iframe.style.display = 'block';
-  iframe.style.borderRadius = '8px';
-  iframe.style.height = (type === 'album') ? '232px' : '80px';
-  player.appendChild(iframe);
-
-  player.style.display = '';
-  player.style.opacity = '1';
-  if (btn) btn.style.display = 'none';
+  window.open('https://open.spotify.com/' + type + '/' + id, '_blank', 'noopener,noreferrer');
 }
 
 function openChat() {
