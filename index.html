@@ -1719,19 +1719,48 @@ window.onSpotifyIframeApiReady = function(IFrameAPI) {
   });
 };
 
+const _linksCache = {};
+
 function toggleSpotify(type, id, el) {
   const titleEl = el ? (el.querySelector('.track-title') || el.querySelector('.album-title')) : null;
   const title = titleEl ? titleEl.textContent.trim() : 'SER';
+  const spotifyUrl = 'https://open.spotify.com/' + type + '/' + id;
   const query = encodeURIComponent('SER ' + title);
 
+  // Show picker immediately with Spotify + fallback search links
   document.getElementById('platformTrackName').textContent = title;
-  document.getElementById('platformSpotify').href = 'https://open.spotify.com/' + type + '/' + id;
+  document.getElementById('platformSpotify').href = spotifyUrl;
   document.getElementById('platformYTMusic').href = 'https://music.youtube.com/search?q=' + query;
   document.getElementById('platformTidal').href = 'https://tidal.com/search/tracks?q=' + query;
   document.getElementById('platformApple').href = 'https://music.apple.com/search?term=' + query;
-
   document.getElementById('platformOverlay').classList.add('open');
   document.body.style.overflow = 'hidden';
+
+  // Fetch real links from Odesli in background
+  if (_linksCache[id]) {
+    _applyLinks(_linksCache[id]);
+    return;
+  }
+  const apiUrl = 'https://api.song.link/v1-alpha.1/links?url=' + encodeURIComponent(spotifyUrl) + '&userCountry=ES';
+  fetch(apiUrl)
+    .then(r => r.json())
+    .then(data => {
+      const lbp = data.linksByPlatform || {};
+      const links = {
+        youtubeMusic: (lbp.youtubeMusic || {}).url || '',
+        tidal: (lbp.tidal || {}).url || '',
+        appleMusic: (lbp.appleMusic || {}).url || '',
+      };
+      _linksCache[id] = links;
+      _applyLinks(links);
+    })
+    .catch(() => {}); // silently keep fallback search links
+}
+
+function _applyLinks(links) {
+  if (links.youtubeMusic) document.getElementById('platformYTMusic').href = links.youtubeMusic;
+  if (links.tidal) document.getElementById('platformTidal').href = links.tidal;
+  if (links.appleMusic) document.getElementById('platformApple').href = links.appleMusic;
 }
 
 function closePlatformPicker(e) {
