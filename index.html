@@ -1691,16 +1691,26 @@ function handleSomos(e) {
   const thanks = document.getElementById('somos-thanks');
   const data = new FormData(form);
 
-  fetch(form.action, {
+  const gracias = () => {
+    form.style.display = 'none';
+    thanks.style.display = 'flex';
+  };
+
+  // Va a /api/subscribe, que guarda el alta y además avisa a Formspree.
+  // Si ese endpoint fallara, se envía directo a Formspree para no perder el alta.
+  fetch('/api/subscribe', {
     method: 'POST',
     body: data,
     headers: { 'Accept': 'application/json' }
   }).then(res => {
-    form.style.display = 'none';
-    thanks.style.display = 'flex';
+    if (!res.ok) throw new Error('subscribe ' + res.status);
+    gracias();
   }).catch(() => {
-    form.style.display = 'none';
-    thanks.style.display = 'flex';
+    fetch(form.action, {
+      method: 'POST',
+      body: data,
+      headers: { 'Accept': 'application/json' }
+    }).finally(gracias);
   });
 }
 

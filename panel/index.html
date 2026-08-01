@@ -117,11 +117,19 @@
   #tip .t-label { color: var(--muted); }
   #tip .t-value { font-variant-numeric: tabular-nums; font-weight: 600; }
 
-  .note {
-    margin-top: 24px; padding: 14px 16px; font-size: 13px; color: var(--ink-2);
-    background: var(--surface); border: 1px solid var(--border); border-radius: 12px;
+  textarea {
+    width: 100%; padding: 10px 12px; font-size: 13px; font-family: inherit; line-height: 1.5;
+    background: var(--page); color: var(--ink);
+    border: 1px solid var(--border); border-radius: 10px; resize: vertical;
   }
-  .note a { color: var(--series-1); }
+  textarea:focus { outline: 2px solid var(--series-1); outline-offset: 1px; }
+
+  .btn-primary {
+    padding: 8px 16px; font-size: 13px; font-weight: 600; font-family: inherit;
+    background: var(--series-1); color: #fff;
+    border: none; border-radius: 8px; cursor: pointer;
+  }
+  .btn-primary:disabled { opacity: 0.5; cursor: default; }
 </style>
 </head>
 <body>
@@ -155,10 +163,33 @@
 
   <div id="content"></div>
 
-  <div class="note">
-    Los correos de la lista SOMOS se gestionan en
-    <a href="https://formspree.io/forms" target="_blank" rel="noopener noreferrer">Formspree</a>,
-    que no permite leerlos por API en el plan gratuito.
+  <div class="card" id="subsCard" style="margin-top:16px">
+    <div class="card-head">
+      <div>
+        <h2>Lista SOMOS</h2>
+        <div class="sub" id="subsSub">Correos suscritos desde la web</div>
+      </div>
+      <div style="display:flex;gap:12px">
+        <button class="toggle" id="btnExport" onclick="exportarCsv()">Descargar CSV</button>
+        <button class="toggle" onclick="verImport()">Importar</button>
+      </div>
+    </div>
+
+    <div id="importBox" hidden>
+      <p class="sub" style="margin-bottom:8px">
+        Pega aquí los correos que ya tienes (de Formspree o de donde sea).
+        Separados por comas, espacios o saltos de línea — también vale pegar un CSV entero.
+        Los repetidos se ignoran solos.
+      </p>
+      <textarea id="importText" rows="6"
+        placeholder="ana@ejemplo.com, luis@ejemplo.com&#10;maria@ejemplo.com"></textarea>
+      <div style="display:flex;gap:10px;align-items:center;margin-top:10px">
+        <button class="btn-primary" onclick="importar()">Importar</button>
+        <span class="sub" id="importMsg"></span>
+      </div>
+    </div>
+
+    <div id="subsList"></div>
   </div>
 </div>
 
@@ -210,6 +241,7 @@ async function cargar(desdeGate) {
   el('updated').textContent = data.rango.since + ' → ' + data.rango.until;
   pintar(data);
   cont.style.opacity = '1';
+  cargarSubs();
 }
 
 /* ---------------- Render ---------------- */
@@ -405,6 +437,81 @@ function linea(id, datos) {
   };
   render();
   new ResizeObserver(render).observe(cont);
+}
+
+/* ---------------- Lista SOMOS ---------------- */
+let suscriptores = [];
+
+async function cargarSubs() {
+  const lista = el('subsList');
+  try {
+    const res = await fetch('/api/subscribers', { headers: { 'x-panel-key': clave } });
+    const d = await res.json();
+    if (!res.ok) {
+      lista.innerHTML = `<p class="empty">${esc(d.error || 'Error ' + res.status)}</p>`;
+      return;
+    }
+    suscriptores = d.suscriptores || [];
+    el('subsSub').textContent = suscriptores.length
+      ? `${fmt(suscriptores.length)} ${suscriptores.length === 1 ? 'correo suscrito' : 'correos suscritos'}`
+      : 'Correos suscritos desde la web';
+    el('btnExport').hidden = !suscriptores.length;
+
+    lista.innerHTML = suscriptores.length
+      ? `<div class="table-wrap"><table>
+          <thead><tr><th>Correo</th><th>Alta</th><th>Origen</th></tr></thead>
+          <tbody>${suscriptores.map(s => `<tr>
+            <td>${esc(s.email)}</td>
+            <td class="num">${s.creado_en ? s.creado_en.slice(0, 10) : ''}</td>
+            <td>${esc(s.origen || '')}</td></tr>`).join('')}</tbody></table></div>`
+      : '<p class="empty">Todavía no hay correos. Usa «Importar» para traer los que ya tienes.</p>';
+  } catch (_) {
+    lista.innerHTML = '<p class="empty">No se pudo cargar la lista.</p>';
+  }
+}
+
+function verImport() {
+  const box = el('importBox');
+  box.hidden = !box.hidden;
+  if (!box.hidden) el('importText').focus();
+}
+
+async function importar() {
+  const texto = el('importText').value.trim();
+  const msg = el('importMsg');
+  if (!texto) { msg.textContent = 'Pega algún correo primero.'; return; }
+
+  const btn = document.querySelector('#importBox .btn-primary');
+  btn.disabled = true; msg.textContent = 'Importando…';
+
+  try {
+    const res = await fetch('/api/subscribers', {
+      method: 'POST',
+      headers: { 'x-panel-key': clave, 'Content-Type': 'application/json' },
+      body: JSON.stringify({ emails: texto }),
+    });
+    const d = await res.json();
+    if (!res.ok) { msg.textContent = d.error || 'Error ' + res.status; }
+    else {
+      msg.textContent = `${d.insertados} añadidos` + (d.repetidos ? `, ${d.repetidos} ya estaban` : '') + '.';
+      el('importText').value = '';
+      cargarSubs();
+    }
+  } catch (_) {
+    msg.textContent = 'No se pudo conectar.';
+  }
+  btn.disabled = false;
+}
+
+function exportarCsv() {
+  const filas = [['email', 'alta', 'origen'],
+    ...suscriptores.map(s => [s.email, s.creado_en || '', s.origen || ''])];
+  const csv = filas.map(f => f.map(c => `"${String(c).replace(/"/g, '""')}"`).join(',')).join('\n');
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(new Blob(['﻿' + csv], { type: 'text/csv;charset=utf-8' }));
+  a.download = `somos-${new Date().toISOString().slice(0, 10)}.csv`;
+  a.click();
+  URL.revokeObjectURL(a.href);
 }
 
 /* ---------------- Filtros ---------------- */
