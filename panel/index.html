@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="robots" content="noindex, nofollow" />
+<title>Panel — SER</title>
+<style>
+  :root {
+    color-scheme: dark;
+    --page:      #0d0d0d;
+    --surface:   #161616;
+    --ink:       #ffffff;
+    --ink-2:     #c3c2b7;
+    --muted:     #898781;
+    --grid:      #2c2c2a;
+    --baseline:  #383835;
+    --border:    rgba(255,255,255,0.10);
+    --series-1:  #0095B5;   /* cian de marca, ajustado a la superficie oscura */
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--page);
+    color: var(--ink);
+    font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+    line-height: 1.5;
+    padding: 24px 16px 64px;
+  }
+
+  .wrap { max-width: 1080px; margin: 0 auto; }
+
+  /* ---------- Acceso ---------- */
+  .gate { max-width: 340px; margin: 18vh auto 0; text-align: center; }
+  .gate h1 { font-size: 22px; font-weight: 600; letter-spacing: -0.01em; }
+  .gate p  { color: var(--muted); font-size: 14px; margin-top: 6px; }
+  .gate form { display: flex; gap: 8px; margin-top: 24px; }
+  .gate input {
+    flex: 1; padding: 11px 14px; font-size: 15px; font-family: inherit;
+    background: var(--surface); color: var(--ink);
+    border: 1px solid var(--border); border-radius: 10px;
+  }
+  .gate input:focus { outline: 2px solid var(--series-1); outline-offset: 1px; }
+  .gate button {
+    padding: 11px 18px; font-size: 15px; font-weight: 600; font-family: inherit;
+    background: var(--series-1); color: #fff;
+    border: none; border-radius: 10px; cursor: pointer;
+  }
+  .gate .err { color: #e66767; font-size: 13px; margin-top: 12px; min-height: 18px; }
+
+  /* ---------- Cabecera y filtros ---------- */
+  header { display: flex; align-items: baseline; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
+  h1.title { font-size: 20px; font-weight: 600; letter-spacing: -0.01em; }
+  .updated { color: var(--muted); font-size: 12px; }
+
+  /* Una sola fila de filtros por encima de todo lo que afecta */
+  .filters { display: flex; gap: 6px; margin: 20px 0 24px; flex-wrap: wrap; }
+  .filters button {
+    padding: 7px 13px; font-size: 13px; font-family: inherit;
+    background: transparent; color: var(--ink-2);
+    border: 1px solid var(--border); border-radius: 999px; cursor: pointer;
+  }
+  .filters button:hover { background: rgba(255,255,255,0.05); }
+  .filters button[aria-pressed="true"] {
+    background: var(--series-1); border-color: var(--series-1); color: #fff; font-weight: 600;
+  }
+
+  /* ---------- Tarjetas de cifras ---------- */
+  .tiles { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 12px; }
+  .tile {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 14px; padding: 16px 18px;
+  }
+  .tile .label { font-size: 12px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.08em; }
+  /* Cifras grandes en proporcional, no tabular */
+  .tile .value { font-size: 34px; font-weight: 600; letter-spacing: -0.02em; margin-top: 4px; }
+  .tile .hint { font-size: 12px; color: var(--muted); margin-top: 2px; }
+
+  /* ---------- Tarjetas de gráfica ---------- */
+  .grid2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 16px; margin-top: 16px; }
+  .card {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 14px; padding: 18px;
+  }
+  .card-head { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; margin-bottom: 14px; }
+  .card h2 { font-size: 14px; font-weight: 600; }
+  .card .sub { font-size: 12px; color: var(--muted); margin-top: 2px; }
+  .toggle {
+    background: none; border: none; padding: 2px 4px; cursor: pointer;
+    color: var(--muted); font-size: 12px; font-family: inherit; text-decoration: underline;
+  }
+  .toggle:hover { color: var(--ink-2); }
+
+  .empty { color: var(--muted); font-size: 13px; padding: 20px 0; text-align: center; }
+
+  /* ---------- Tabla equivalente ---------- */
+  table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  th, td { text-align: left; padding: 7px 8px; border-bottom: 1px solid var(--grid); }
+  th { color: var(--muted); font-weight: 500; font-size: 12px; }
+  td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; }
+  .table-wrap { overflow-x: auto; }
+
+  svg { display: block; width: 100%; overflow: visible; }
+  svg text { font-family: system-ui, -apple-system, "Segoe UI", sans-serif; }
+  .tick { fill: var(--muted); font-size: 11px; font-variant-numeric: tabular-nums; }
+  .bar-label { fill: var(--ink-2); font-size: 12px; }
+  .bar-value { fill: var(--ink-2); font-size: 12px; font-variant-numeric: tabular-nums; }
+
+  /* Tooltip compartido */
+  #tip {
+    position: fixed; pointer-events: none; opacity: 0; transition: opacity .1s;
+    background: #000; border: 1px solid var(--border); border-radius: 8px;
+    padding: 7px 10px; font-size: 12px; white-space: nowrap; z-index: 50;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.6);
+  }
+  #tip .t-label { color: var(--muted); }
+  #tip .t-value { font-variant-numeric: tabular-nums; font-weight: 600; }
+
+  .note {
+    margin-top: 24px; padding: 14px 16px; font-size: 13px; color: var(--ink-2);
+    background: var(--surface); border: 1px solid var(--border); border-radius: 12px;
+  }
+  .note a { color: var(--series-1); }
+</style>
+</head>
+<body>
+
+<div id="tip" role="status" aria-live="polite"></div>
+
+<!-- Pantalla de acceso -->
+<section class="gate" id="gate">
+  <h1>Panel de SER</h1>
+  <p>Introduce la clave para ver las estadísticas.</p>
+  <form onsubmit="entrar(event)">
+    <input id="key" type="password" placeholder="Clave" autocomplete="current-password" required />
+    <button type="submit">Entrar</button>
+  </form>
+  <div class="err" id="gateErr"></div>
+</section>
+
+<!-- Panel -->
+<div class="wrap" id="panel" hidden>
+  <header>
+    <h1 class="title">Panel de SER</h1>
+    <span class="updated" id="updated"></span>
+  </header>
+
+  <div class="filters" id="filters" role="group" aria-label="Periodo">
+    <button type="button" data-days="7">7 días</button>
+    <button type="button" data-days="30" aria-pressed="true">30 días</button>
+    <button type="button" data-days="90">90 días</button>
+    <button type="button" data-days="365">1 año</button>
+  </div>
+
+  <div id="content"></div>
+
+  <div class="note">
+    Los correos de la lista SOMOS se gestionan en
+    <a href="https://formspree.io/forms" target="_blank" rel="noopener noreferrer">Formspree</a>,
+    que no permite leerlos por API en el plan gratuito.
+  </div>
+</div>
+
+<script>
+const fmt = n => (n || 0).toLocaleString('es-ES');
+const el = (id) => document.getElementById(id);
+
+let clave = sessionStorage.getItem('panelKey') || '';
+let dias = 30;
+
+/* ---------------- Acceso ---------------- */
+function entrar(e) {
+  e.preventDefault();
+  clave = el('key').value;
+  cargar(true);
+}
+
+/* ---------------- Carga de datos ---------------- */
+async function cargar(desdeGate) {
+  const cont = el('content');
+  // No parpadear con esqueletos: se atenúa lo anterior
+  if (cont.children.length) cont.style.opacity = '0.45';
+
+  let res, data;
+  try {
+    res = await fetch('/api/stats?days=' + dias, { headers: { 'x-panel-key': clave } });
+    data = await res.json();
+  } catch (err) {
+    if (desdeGate) el('gateErr').textContent = 'No se pudo conectar.';
+    cont.style.opacity = '1';
+    return;
+  }
+
+  if (!res.ok) {
+    if (desdeGate || res.status === 401) {
+      el('gateErr').textContent = data.error || 'Error ' + res.status;
+      sessionStorage.removeItem('panelKey');
+      cont.style.opacity = '1';
+      return;
+    }
+    cont.innerHTML = '<div class="card"><p class="empty">' + (data.error || 'Error') + '</p></div>';
+    cont.style.opacity = '1';
+    return;
+  }
+
+  sessionStorage.setItem('panelKey', clave);
+  el('gate').hidden = true;
+  el('panel').hidden = false;
+  el('updated').textContent = data.rango.since + ' → ' + data.rango.until;
+  pintar(data);
+  cont.style.opacity = '1';
+}
+
+/* ---------------- Render ---------------- */
+function pintar(d) {
+  const r = d.resumen;
+  el('content').innerHTML = `
+    <div class="tiles">
+      ${tile('Visitas', fmt(r.visitas), 'páginas vistas')}
+      ${tile('Personas', fmt(r.personas), 'visitantes únicos')}
+      ${tile('Clicks a plataforma', fmt(r.clicksPlataforma), 'pulsaron escuchar')}
+      ${tile('Conversión', r.conversion + '%', 'de visitantes a click')}
+    </div>
+
+    ${card('lineas', 'Visitas por día', 'Páginas vistas cada día del periodo', d.porDia.length)}
+
+    <div class="grid2">
+      ${card('plataformas', 'A qué plataforma le dan click', 'Botones pulsados en las páginas de lanzamiento', d.porPlataforma.length)}
+      ${card('lanzamientos', 'Qué lanzamiento genera más clicks', 'Clicks agrupados por canción o álbum', d.porLanzamiento.length)}
+      ${card('paginas', 'Páginas más visitadas', 'Por ruta del sitio', d.porPagina.length)}
+      ${card('origen', 'De dónde llega la gente', 'Sitio que les trajo', d.porOrigen.length)}
+      ${card('paises', 'Países', 'Visitantes por país', d.porPais.length)}
+      ${card('eventos', 'Interacciones en la web', 'Todos los eventos registrados', d.porEvento.length)}
+    </div>`;
+
+  linea('lineas', d.porDia);
+  barras('plataformas',  d.porPlataforma, x => x.eventData, x => x.count,     'Plataforma', 'Clicks');
+  barras('lanzamientos', d.porLanzamiento, x => x.eventData, x => x.count,    'Lanzamiento', 'Clicks');
+  barras('paginas',      d.porPagina,     x => x.requestPath, x => x.pageviews, 'Página', 'Visitas');
+  barras('origen',       d.porOrigen,     x => x.referrerHostname || 'directo', x => x.pageviews, 'Origen', 'Visitas');
+  barras('paises',       d.porPais,       x => x.country,    x => x.visitors,  'País', 'Personas');
+  barras('eventos',      d.porEvento,     x => x.eventName,  x => x.count,     'Evento', 'Veces');
+}
+
+function tile(label, value, hint) {
+  return `<div class="tile"><div class="label">${label}</div>
+          <div class="value">${value}</div><div class="hint">${hint}</div></div>`;
+}
+
+function card(id, titulo, sub, n) {
+  return `<div class="card">
+    <div class="card-head">
+      <div><h2>${titulo}</h2><div class="sub">${sub}</div></div>
+      ${n ? `<button class="toggle" onclick="verTabla('${id}')" id="tg-${id}">Ver tabla</button>` : ''}
+    </div>
+    <div id="fig-${id}">${n ? '' : '<p class="empty">Sin datos todavía en este periodo.</p>'}</div>
+    <div id="tab-${id}" hidden></div>
+  </div>`;
+}
+
+function verTabla(id) {
+  const fig = el('fig-' + id), tab = el('tab-' + id), btn = el('tg-' + id);
+  const verTab = tab.hasAttribute('hidden');
+  tab.hidden = !verTab; fig.hidden = verTab;
+  btn.textContent = verTab ? 'Ver gráfica' : 'Ver tabla';
+}
+
+function tabla(id, filas, colA, colB) {
+  el('tab-' + id).innerHTML = `<div class="table-wrap"><table>
+    <thead><tr><th>${colA}</th><th class="num">${colB}</th></tr></thead>
+    <tbody>${filas.map(f => `<tr><td>${esc(f[0])}</td><td class="num">${fmt(f[1])}</td></tr>`).join('')}</tbody>
+  </table></div>`;
+}
+
+const esc = s => String(s == null ? '' : s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+
+/* ---------------- Tooltip ---------------- */
+const tip = el('tip');
+function mostrarTip(e, label, value) {
+  tip.innerHTML = `<div class="t-label">${esc(label)}</div><div class="t-value">${value}</div>`;
+  tip.style.opacity = '1';
+  const r = tip.getBoundingClientRect();
+  let x = e.clientX + 14, y = e.clientY - r.height - 10;
+  if (x + r.width > innerWidth - 8) x = e.clientX - r.width - 14;
+  if (y < 8) y = e.clientY + 16;
+  tip.style.left = x + 'px'; tip.style.top = y + 'px';
+}
+const ocultarTip = () => { tip.style.opacity = '0'; };
+
+/* ---------------- Barras horizontales ----------------
+   Una sola serie ⇒ un solo color para todas las barras.  */
+function barras(id, datos, fLabel, fValor, colA, colB) {
+  if (!datos.length) return;
+  const filas = datos.map(d => [fLabel(d), fValor(d)]).sort((a, b) => b[1] - a[1]);
+  tabla(id, filas, colA, colB);
+
+  const alto = 30, gap = 6, anchoEtiq = 132, anchoVal = 52;
+  const max = Math.max(...filas.map(f => f[1]), 1);
+
+  // Se dibuja midiendo el ancho real del contenedor, y se redibuja al redimensionar
+  ajustarBarras(id, filas, max, alto, gap, anchoEtiq, anchoVal, colA, colB);
+}
+
+function trunc(s, n = 20) { s = String(s); return s.length > n ? s.slice(0, n - 1) + '…' : s; }
+
+function ajustarBarras(id, filas, max, alto, gap, anchoEtiq, anchoVal, colA, colB) {
+  const cont = el('fig-' + id);
+  const render = () => {
+    const W = cont.clientWidth || 320;
+    const h = filas.length * (alto + gap);
+    const zona = Math.max(W - anchoEtiq - anchoVal, 40);
+    const g = filas.map((f, i) => {
+      const y = i * (alto + gap);
+      const w = Math.max((f[1] / max) * zona, 2);
+      return `<g class="row" data-label="${esc(f[0])}" data-value="${fmt(f[1])}">
+        <rect x="0" y="${y}" width="${W}" height="${alto}" fill="transparent"></rect>
+        <text class="bar-label" x="0" y="${y + alto / 2}" dominant-baseline="central">${esc(trunc(f[0]))}</text>
+        <rect x="${anchoEtiq}" y="${y + 7}" width="${w}" height="${alto - 14}" rx="4" fill="var(--series-1)"></rect>
+        <text class="bar-value" x="${W}" y="${y + alto / 2}" text-anchor="end" dominant-baseline="central">${fmt(f[1])}</text>
+      </g>`;
+    }).join('');
+    cont.innerHTML = `<svg viewBox="0 0 ${W} ${h}" style="height:${h}px" role="img"
+        aria-label="${colA} por ${colB}">${g}</svg>`;
+    cont.querySelectorAll('.row').forEach(row => {
+      row.style.cursor = 'default';
+      row.addEventListener('mousemove', e => mostrarTip(e, row.dataset.label, row.dataset.value));
+      row.addEventListener('mouseleave', ocultarTip);
+    });
+  };
+  render();
+  new ResizeObserver(render).observe(cont);
+}
+
+/* ---------------- Línea de visitas por día ---------------- */
+function linea(id, datos) {
+  if (!datos.length) return;
+  const filas = datos.map(d => [d.timestamp.slice(0, 10), d.pageviews || 0]);
+  tabla(id, filas, 'Día', 'Visitas');
+
+  const cont = el('fig-' + id);
+  const render = () => {
+    const W = cont.clientWidth || 600;
+    const H = 220, ejeX = 26, padT = 12, padR = 8, padL = 40;
+    const plot = H - ejeX - padT;
+    const max = Math.max(...filas.map(f => f[1]), 1);
+    const ancho = Math.max(W - padL - padR, 40);
+    const px = i => padL + (filas.length === 1 ? ancho / 2 : (i / (filas.length - 1)) * ancho);
+    const py = v => padT + plot - (v / max) * plot;
+
+    // Rejilla: hairlines sólidas, un tono por encima de la superficie
+    const pasos = 4;
+    const grid = Array.from({ length: pasos + 1 }, (_, i) => {
+      const v = Math.round((max / pasos) * i), y = py(v);
+      return `<line x1="${padL}" x2="${W - padR}" y1="${y}" y2="${y}" stroke="var(--grid)" stroke-width="1"/>
+              <text class="tick" x="${padL - 8}" y="${y}" text-anchor="end" dominant-baseline="central">${fmt(v)}</text>`;
+    }).join('');
+
+    const linea = filas.map((f, i) => `${i ? 'L' : 'M'}${px(i)},${py(f[1])}`).join(' ');
+    const area = `${linea} L${px(filas.length - 1)},${padT + plot} L${px(0)},${padT + plot} Z`;
+
+    // Etiquetas de fecha: sólo primera, media y última para no saturar
+    const idx = [0, Math.floor(filas.length / 2), filas.length - 1].filter((v, i, a) => a.indexOf(v) === i);
+    const fechas = idx.map(i => {
+      const [y, m, dd] = filas[i][0].split('-');
+      const anchor = i === 0 ? 'start' : (i === filas.length - 1 ? 'end' : 'middle');
+      return `<text class="tick" x="${px(i)}" y="${H - 8}" text-anchor="${anchor}">${dd}/${m}</text>`;
+    }).join('');
+
+    const puntos = filas.map((f, i) =>
+      `<circle cx="${px(i)}" cy="${py(f[1])}" r="4" fill="var(--series-1)" opacity="0"
+               data-i="${i}" class="pt"/>`).join('');
+
+    cont.innerHTML = `<svg viewBox="0 0 ${W} ${H}" style="height:${H}px" role="img" aria-label="Visitas por día">
+      ${grid}
+      <path d="${area}" fill="var(--series-1)" opacity="0.13"/>
+      <path d="${linea}" fill="none" stroke="var(--series-1)" stroke-width="2"
+            stroke-linejoin="round" stroke-linecap="round"/>
+      <line id="cross-${id}" y1="${padT}" y2="${padT + plot}" stroke="var(--baseline)" stroke-width="1" opacity="0"/>
+      ${puntos}
+      <line x1="${padL}" x2="${W - padR}" y1="${padT + plot}" y2="${padT + plot}" stroke="var(--baseline)" stroke-width="1"/>
+      ${fechas}
+      <rect id="hit-${id}" x="${padL}" y="${padT}" width="${ancho}" height="${plot}" fill="transparent"/>
+    </svg>`;
+
+    // Zona de captura amplia: el puntero no tiene que acertar el punto
+    const svg = cont.querySelector('svg');
+    const cross = cont.querySelector('#cross-' + id);
+    const pts = [...cont.querySelectorAll('.pt')];
+    svg.addEventListener('mousemove', e => {
+      const r = svg.getBoundingClientRect();
+      const xRel = ((e.clientX - r.left) / r.width) * W;
+      let mejor = 0, dist = Infinity;
+      filas.forEach((f, i) => { const d = Math.abs(px(i) - xRel); if (d < dist) { dist = d; mejor = i; } });
+      pts.forEach((p, i) => p.setAttribute('opacity', i === mejor ? '1' : '0'));
+      cross.setAttribute('x1', px(mejor)); cross.setAttribute('x2', px(mejor));
+      cross.setAttribute('opacity', '1');
+      const [y, m, dd] = filas[mejor][0].split('-');
+      mostrarTip(e, `${dd}/${m}/${y}`, fmt(filas[mejor][1]) + ' visitas');
+    });
+    svg.addEventListener('mouseleave', () => {
+      ocultarTip(); cross.setAttribute('opacity', '0');
+      pts.forEach(p => p.setAttribute('opacity', '0'));
+    });
+  };
+  render();
+  new ResizeObserver(render).observe(cont);
+}
+
+/* ---------------- Filtros ---------------- */
+el('filters').addEventListener('click', e => {
+  const b = e.target.closest('button[data-days]');
+  if (!b) return;
+  dias = parseInt(b.dataset.days, 10);
+  [...el('filters').children].forEach(x => x.setAttribute('aria-pressed', x === b ? 'true' : 'false'));
+  cargar(false);
+});
+
+// Si ya hay clave en la sesión, entra directo
+if (clave) cargar(true);
+</script>
+</body>
+</html>
