@@ -20,8 +20,14 @@ export default async function handler(req) {
   const url = process.env.SUPABASE_URL;
   const key = process.env.SUPABASE_SERVICE_KEY;
 
-  if (!password) return json({ error: 'Falta configurar PANEL_PASSWORD en Vercel.' }, 500);
-  if (!url || !key) return json({ error: 'Faltan SUPABASE_URL o SUPABASE_SERVICE_KEY en Vercel.' }, 500);
+  // Se avisa de todas las que falten a la vez, para no descubrirlas de una en una
+  const faltan = [];
+  if (!password) faltan.push('PANEL_PASSWORD');
+  if (!url) faltan.push('SUPABASE_URL');
+  if (!key) faltan.push('SUPABASE_SERVICE_KEY');
+  if (faltan.length) {
+    return json({ error: `Faltan variables en Vercel: ${faltan.join(', ')}.`, faltan }, 500);
+  }
 
   const dada = req.headers.get('x-panel-key') || '';
   if (!safeEqual(dada, password)) return json({ error: 'Clave incorrecta.' }, 401);

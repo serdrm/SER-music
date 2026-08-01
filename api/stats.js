@@ -36,8 +36,13 @@ export default async function handler(req) {
   const token = process.env.VERCEL_ANALYTICS_TOKEN;
   const password = process.env.PANEL_PASSWORD;
 
-  if (!password) return json({ error: 'Falta configurar PANEL_PASSWORD en Vercel.' }, 500);
-  if (!token) return json({ error: 'Falta configurar VERCEL_ANALYTICS_TOKEN en Vercel.' }, 500);
+  // Se avisa de todas las que falten a la vez, para no descubrirlas de una en una
+  const faltan = [];
+  if (!password) faltan.push('PANEL_PASSWORD');
+  if (!token) faltan.push('VERCEL_ANALYTICS_TOKEN');
+  if (faltan.length) {
+    return json({ error: `Faltan variables en Vercel: ${faltan.join(', ')}.`, faltan }, 500);
+  }
 
   const url = new URL(req.url);
   const given = req.headers.get('x-panel-key') || url.searchParams.get('key') || '';
