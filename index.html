@@ -6,6 +6,7 @@
   <title>SER — Post Pop desde Barcelona</title>
   <meta name="description" content="Venezuelan flow en tierras Europeas. Post Pop desde Barcelona." />
   <link rel="canonical" href="https://www.ser-music.com" />
+  <script>window.va=window.va||function(){(window.vaq=window.vaq||[]).push(arguments)};</script>
   <script defer src="/_vercel/insights/script.js"></script>
   <script src="https://open.spotify.com/embed/iframe-api/v1" async></script>
   <meta property="og:title" content="SER — Post Pop desde Barcelona" />
@@ -1169,7 +1170,7 @@
 
   <div class="ctab-panel" id="panel-prensa">
     <div class="bio-block">
-      <p>Sergio Romero es un músico y productor venezolano afincado en Barcelona. Conocido como <strong>SER</strong>, graba y produce en solitario desde su habitación, combinando indie pop, R&amp;B y soul latino en un sonido que él mismo define como post pop. Antes de SER, fue baterista de <strong>Los Colores</strong>, banda alternativa venezolana reconocida entre las Top 10 Young Latin Promises de Billboard en 2013 y con actuaciones en el Teatro Teresa Carreño de Caracas.</p>
+      <p>Sergio Romero es un músico y productor venezolano afincado en Barcelona. Conocido como <strong>SER</strong>, graba y produce sus propias canciones, combinando indie pop, R&amp;B y soul latino en un sonido que él mismo define como post pop. Antes de SER, fue baterista de <strong>Los Colores</strong>, banda alternativa venezolana reconocida entre las Top 10 Young Latin Promises de Billboard en 2013 y con actuaciones en el Teatro Teresa Carreño de Caracas.</p>
       <p>En 2025 lanzó <strong>CICLOS</strong>, su primer álbum de diez canciones, construido alrededor de historias reales sobre el amor, la parálisis y el tiempo. En vivo, SER se convierte en <strong>SOMOS</strong> — junto a Jerry Maneiro y David Rojas, el proyecto cobra una nueva dimensión sobre el escenario. El 15 de mayo de 2026 celebró su primer show en Santuari Barcelona — batería, voz, guitarra y bajo, aforo íntimo, sala llena. SER sigue adelante.</p>
     </div>
     <div class="epk-panel">
@@ -1976,6 +1977,76 @@ function toggleAccordion(id) {
   window.addEventListener('scroll', function(){
     bg.style.transform = 'translateY(' + (window.scrollY * 0.12) + 'px)';
   }, { passive: true });
+})();
+
+// ---- Analítica: registra en qué hace click la gente ----
+(function(){
+  function track(name, data) { window.va('event', { name: name, data: data || {} }); }
+
+  // Nombre legible de plataforma a partir del dominio del enlace
+  function platformOf(href) {
+    var h = (href || '').toLowerCase();
+    if (h.indexOf('open.spotify') > -1)    return 'Spotify';
+    if (h.indexOf('music.youtube') > -1)   return 'YouTube Music';
+    if (h.indexOf('youtube.com') > -1)     return 'YouTube';
+    if (h.indexOf('music.apple') > -1)     return 'Apple Music';
+    if (h.indexOf('tidal') > -1)           return 'Tidal';
+    if (h.indexOf('deezer') > -1)          return 'Deezer';
+    if (h.indexOf('music.amazon') > -1)    return 'Amazon Music';
+    if (h.indexOf('instagram') > -1)       return 'Instagram';
+    if (h.indexOf('tiktok') > -1)          return 'TikTok';
+    if (h.indexOf('bandcamp') > -1)        return 'Bandcamp';
+    return 'otro';
+  }
+
+  // Botones de redes/plataformas de la cabecera
+  document.querySelectorAll('a.btn').forEach(function(a){
+    a.addEventListener('click', function(){
+      track('social_click', { platform: platformOf(a.href) });
+    });
+  });
+
+  // Descarga del EPK
+  document.querySelectorAll('.epk-download-btn').forEach(function(a){
+    a.addEventListener('click', function(){ track('epk_download', {}); });
+  });
+
+  // Plataforma elegida en el selector que sale al pinchar una canción
+  document.querySelectorAll('.platform-overlay .platform-btn').forEach(function(a){
+    a.addEventListener('click', function(){
+      var t = document.getElementById('platformTrackName');
+      track('platform_click', {
+        platform: platformOf(a.href),
+        release: t ? t.textContent.trim() : 'desconocido'
+      });
+    });
+  });
+
+  // Canción abierta desde la sección Música
+  if (typeof window.toggleSpotify === 'function') {
+    var _toggleSpotify = window.toggleSpotify;
+    window.toggleSpotify = function(type, id, el){
+      var titleEl = el ? (el.querySelector('.track-title') || el.querySelector('.album-title')) : null;
+      track('track_open', {
+        release: titleEl ? titleEl.textContent.trim() : 'SER',
+        type: type
+      });
+      return _toggleSpotify.apply(this, arguments);
+    };
+  }
+
+  // Video reproducido
+  if (typeof window.openVideo === 'function') {
+    var _openVideo = window.openVideo;
+    window.openVideo = function(id, title){
+      track('video_play', { title: title || id });
+      return _openVideo.apply(this, arguments);
+    };
+  }
+
+  // Alta en la lista SOMOS
+  var somosForm = document.getElementById('somos-form');
+  if (somosForm) somosForm.addEventListener('submit', function(){ track('subscribe', {}); });
 })();
 </script>
 </body>
