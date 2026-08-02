@@ -247,32 +247,46 @@ async function cargar(desdeGate) {
 /* ---------------- Render ---------------- */
 function pintar(d) {
   const r = d.resumen;
+  const pro = d.eventosDisponibles;
+
   el('content').innerHTML = `
     <div class="tiles">
       ${tile('Visitas', fmt(r.visitas), 'páginas vistas')}
       ${tile('Personas', fmt(r.personas), 'visitantes únicos')}
-      ${tile('Clicks a plataforma', fmt(r.clicksPlataforma), 'pulsaron escuchar')}
-      ${tile('Conversión', r.conversion + '%', 'de visitantes a click')}
+      ${tile('Clicks a plataforma', pro ? fmt(r.clicksPlataforma) : '—', pro ? 'pulsaron escuchar' : 'requiere plan Pro')}
+      ${tile('Conversión', pro ? r.conversion + '%' : '—', pro ? 'de visitantes a click' : 'requiere plan Pro')}
     </div>
 
     ${card('lineas', 'Visitas por día', 'Páginas vistas cada día del periodo', d.porDia.length)}
 
     <div class="grid2">
-      ${card('plataformas', 'A qué plataforma le dan click', 'Botones pulsados en las páginas de lanzamiento', d.porPlataforma.length)}
-      ${card('lanzamientos', 'Qué lanzamiento genera más clicks', 'Clicks agrupados por canción o álbum', d.porLanzamiento.length)}
       ${card('paginas', 'Páginas más visitadas', 'Por ruta del sitio', d.porPagina.length)}
       ${card('origen', 'De dónde llega la gente', 'Sitio que les trajo', d.porOrigen.length)}
       ${card('paises', 'Países', 'Visitantes por país', d.porPais.length)}
-      ${card('eventos', 'Interacciones en la web', 'Todos los eventos registrados', d.porEvento.length)}
+      ${pro ? card('plataformas', 'A qué plataforma le dan click', 'Botones pulsados en las páginas de lanzamiento', d.porPlataforma.length) : proCard('A qué plataforma le dan click')}
+      ${pro ? card('lanzamientos', 'Qué lanzamiento genera más clicks', 'Clicks agrupados por canción o álbum', d.porLanzamiento.length) : proCard('Qué lanzamiento genera más clicks')}
+      ${pro ? card('eventos', 'Interacciones en la web', 'Todos los eventos registrados', d.porEvento.length) : proCard('Interacciones en la web')}
     </div>`;
 
   linea('lineas', d.porDia);
-  barras('plataformas',  d.porPlataforma, x => x.eventData, x => x.count,     'Plataforma', 'Clicks');
-  barras('lanzamientos', d.porLanzamiento, x => x.eventData, x => x.count,    'Lanzamiento', 'Clicks');
-  barras('paginas',      d.porPagina,     x => x.requestPath, x => x.pageviews, 'Página', 'Visitas');
-  barras('origen',       d.porOrigen,     x => x.referrerHostname || 'directo', x => x.pageviews, 'Origen', 'Visitas');
-  barras('paises',       d.porPais,       x => x.country,    x => x.visitors,  'País', 'Personas');
-  barras('eventos',      d.porEvento,     x => x.eventName,  x => x.count,     'Evento', 'Veces');
+  barras('paginas', d.porPagina, x => x.requestPath, x => x.pageviews, 'Página', 'Visitas');
+  barras('origen',  d.porOrigen, x => x.referrerHostname || 'directo', x => x.pageviews, 'Origen', 'Visitas');
+  barras('paises',  d.porPais,   x => x.country, x => x.visitors, 'País', 'Personas');
+
+  if (pro) {
+    barras('plataformas',  d.porPlataforma, x => x.eventData, x => x.count, 'Plataforma', 'Clicks');
+    barras('lanzamientos', d.porLanzamiento, x => x.eventData, x => x.count, 'Lanzamiento', 'Clicks');
+    barras('eventos',      d.porEvento,      x => x.eventName, x => x.count, 'Evento', 'Veces');
+  }
+}
+
+// Tarjeta para lo que solo se puede ver con plan Pro de Vercel (eventos personalizados)
+function proCard(titulo) {
+  return `<div class="card">
+    <div class="card-head"><div><h2>${titulo}</h2></div></div>
+    <p class="empty">Esto se sigue registrando, pero Vercel solo deja consultarlo por API
+    en un plan Pro o superior. En el plan gratis no se puede mostrar aquí.</p>
+  </div>`;
 }
 
 function tile(label, value, hint) {

@@ -27,9 +27,22 @@ async function query(token, dataset, mode, params) {
   });
   if (!res.ok) {
     const detail = await res.text();
-    throw new Error(`${dataset}/${mode} → ${res.status} ${detail.slice(0, 200)}`);
+    const err = new Error(`${dataset}/${mode} → ${res.status} ${detail.slice(0, 200)}`);
+    err.status = res.status;
+    throw err;
   }
   return res.json();
+}
+
+// Los eventos personalizados (platform_click, subscribe, etc.) requieren plan Pro/Enterprise.
+// En el plan gratis Vercel devuelve 402 — se trata como "no disponible", no como error.
+async function queryEventos(token, mode, params) {
+  try {
+    return { data: (await query(token, 'events', mode, params)).data || [], disponible: true };
+  } catch (e) {
+    if (e.status === 402) return { data: [], disponible: false };
+    throw e;
+  }
 }
 
 export default async function handler(req) {
@@ -59,40 +72,46 @@ export default async function handler(req) {
   const CLICKS = "eventName eq 'platform_click'";
 
   try {
-    const [porDia, porPagina, porPais, porOrigen, porDispositivo, porEvento, porPlataforma, porLanzamiento] =
-      await Promise.all([
-        query(token, 'visits', 'aggregate', { ...range, by: 'day' }),
-        query(token, 'visits', 'aggregate', { ...range, by: 'requestPath', limit: '15' }),
-        query(token, 'visits', 'aggregate', { ...range, by: 'country', limit: '8' }),
-        query(token, 'visits', 'aggregate', { ...range, by: 'referrerHostname', limit: '8' }),
-        query(token, 'visits', 'aggregate', { ...range, by: 'deviceType', limit: '5' }),
-        query(token, 'events', 'aggregate', { ...range, by: 'eventName', limit: '15' }),
-        query(token, 'events', 'aggregate', { ...range, by: 'eventData/platform', limit: '10', filter: CLICKS }),
-        query(token, 'events', 'aggregate', { ...range, by: 'eventData/release', limit: '15', filter: CLICKS }),
-      ]);
+    // Visitas: disponible en el plan gratis. Si esto falla, sí es un error real.
+    const [porDia, porPagina, porPais, porOrigen, porDispositivo] = await Promise.all([
+      query(token, 'visits', 'aggregate', { ...range, by: 'day' }),
+      query(token, 'visits', 'aggregate', { ...range, by: 'requestPath', limit: '15' }),
+      query(token, 'visits', 'aggregate', { ...range, by: 'country', limit: '8' }),
+      query(token, 'visits', 'aggregate', { ...range, by: 'referrerHostname', limit: '8' }),
+      query(token, 'visits', 'aggregate', { ...range, by: 'deviceType', limit: '5' }),
+    ]);
+
+    // Eventos personalizados: requieren plan Pro/Enterprise. Se degrada sin romper el panel.
+    const [porEvento, porPlataforma, porLanzamiento] = await Promise.all([
+      queryEventos(token, 'aggregate', { ...range, by: 'eventName', limit: '15' }),
+      queryEventos(token, 'aggregate', { ...range, by: 'eventData/platform', limit: '10', filter: CLICKS }),
+      queryEventos(token, 'aggregate', { ...range, by: 'eventData/release', limit: '15', filter: CLICKS }),
+    ]);
+    const eventosDisponibles = porEvento.disponible;
 
     const dias = porDia.data || [];
     const totalVisitas = dias.reduce((s, d) => s + (d.pageviews || 0), 0);
     const totalPersonas = dias.reduce((s, d) => s + (d.visitors || 0), 0);
-    const clicks = (porPlataforma.data || []).reduce((s, d) => s + (d.count || 0), 0);
+    const clicks = porPlataforma.data.reduce((s, d) => s + (d.count || 0), 0);
 
     return json({
       rango: { ...range, dias: days },
+      eventosDisponibles,
       resumen: {
         visitas: totalVisitas,
         personas: totalPersonas,
-        clicksPlataforma: clicks,
+        clicksPlataforma: eventosDisponibles ? clicks : null,
         // Qué porcentaje de quienes entran acaban pulsando una plataforma
-        conversion: totalPersonas ? Math.round((clicks / totalPersonas) * 100) : 0,
+        conversion: eventosDisponibles && totalPersonas ? Math.round((clicks / totalPersonas) * 100) : null,
       },
       porDia: dias,
       porPagina: porPagina.data || [],
       porPais: porPais.data || [],
       porOrigen: porOrigen.data || [],
       porDispositivo: porDispositivo.data || [],
-      porEvento: porEvento.data || [],
-      porPlataforma: porPlataforma.data || [],
-      porLanzamiento: porLanzamiento.data || [],
+      porEvento: porEvento.data,
+      porPlataforma: porPlataforma.data,
+      porLanzamiento: porLanzamiento.data,
     });
   } catch (e) {
     return json({ error: String(e.message || e) }, 502);
