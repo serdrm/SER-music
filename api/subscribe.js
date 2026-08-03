@@ -2,7 +2,6 @@ export const config = { runtime: 'edge' };
 
 const FORMSPREE = 'https://formspree.io/f/xykabnza';
 const RESPONDER_A = 'unsergioromero@gmail.com';
-const CICLOS_ARTWORK = 'https://i.scdn.co/image/ab67616d0000b2737b53010fcb2c3e1c269bc7c2';
 
 const json = (body, status = 200) =>
   new Response(JSON.stringify(body), {
@@ -47,62 +46,86 @@ async function avisarFormspree(email) {
   }
 }
 
-// Fila de "lo que viene", con tablas en vez de flex para que se vea bien
-// incluso en clientes de correo que no soportan CSS moderno (Outlook)
-function filaSomos(color, icono, titulo, sub) {
-  return `
-    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#161616;border:1px solid rgba(255,255,255,0.08);border-radius:13px;margin-bottom:8px">
-      <tr>
-        <td style="padding:14px 15px;width:44px;vertical-align:top">
-          <div style="width:30px;height:30px;border-radius:50%;background:${color.bg};color:${color.fg};font-size:14px;font-weight:bold;text-align:center;line-height:30px">${icono}</div>
-        </td>
-        <td style="padding:14px 15px 14px 0;vertical-align:top">
-          <p style="margin:0 0 2px;font-size:14px;font-weight:bold;color:#ffffff;font-family:Helvetica,Arial,sans-serif">${titulo}</p>
-          <p style="margin:0;font-size:12.5px;line-height:1.4;color:rgba(245,243,239,0.55);font-family:Helvetica,Arial,sans-serif">${sub}</p>
-        </td>
-      </tr>
-    </table>`;
-}
-
+// Diseño "Urbano" (handoff de diseño, agosto 2026): negro + acentos fríos,
+// narrativa de "la Cuadra". Construido con tablas y estilos inline porque
+// los clientes de correo (Outlook sobre todo) no soportan flexbox/grid —
+// el mockup original usaba CSS moderno, esto es la versión que sí funciona
+// en Gmail/Outlook/Apple Mail.
 function correoBienvenida(email) {
-  const fila = filaSomos;
-  return `
-  <div style="background:#ececea;padding:32px 12px">
-    <div style="max-width:480px;margin:0 auto;background:#0a0a0a;border-radius:14px;overflow:hidden;font-family:Helvetica,Arial,sans-serif;color:#f5f3ef">
+  const NEGRO = '#0C0C0D';
+  const PANEL = '#131113';
+  const HUESO = '#F2EFEC';
+  const GRIS = '#7A7876';
+  const ROSA = '#C97BA0';
+  const TURQUESA = '#4FA8AB';
 
-      <div style="height:4px;line-height:4px;font-size:0;background:#ff7a45;background:linear-gradient(90deg,#ff7a45,#f2578b,#6a4fc4,#00b4d8)">&nbsp;</div>
+  const FONT_DISPLAY = "'Anton',Impact,'Arial Narrow',Arial,sans-serif";
+  const FONT_BODY = "'Space Grotesk',Helvetica,Arial,sans-serif";
+  const FONT_MONO = "'JetBrains Mono',Consolas,'Courier New',monospace";
 
-      <img src="${CICLOS_ARTWORK}" width="480" alt="CICLOS" style="width:100%;display:block" />
+  const p = (html, marginBottom) =>
+    `<p style="margin:0 0 ${marginBottom}px;font-size:16px;line-height:1.75;color:${HUESO};font-family:${FONT_BODY}">${html}</p>`;
 
-      <div style="padding:22px 28px 32px">
-        <span style="display:inline-block;font-size:11px;font-weight:bold;letter-spacing:0.22em;color:#ff7a45">SOMOS</span>
-
-        <h1 style="margin:10px 0 0;font-family:'Arial Narrow',Arial,sans-serif;font-weight:bold;text-transform:uppercase;font-size:32px;line-height:1.05;letter-spacing:0.01em;color:#ffffff">Ya eres parte de esto</h1>
-
-        <p style="margin:16px 0 0;font-size:15px;line-height:1.62;color:rgba(245,243,239,0.86)">Salí de Venezuela con una maleta y volví a nacer en Barcelona. De ese cruce salió CICLOS — y de aquí en adelante, todo lo que venga después.</p>
-        <p style="margin:12px 0 0;font-size:15px;line-height:1.62;color:rgba(245,243,239,0.86)">Este correo te lo escribo yo, con mis manos, sin equipo ni plantilla detrás. Allá de donde vengo uno aprende rápido quién se queda cerca — y tú decidiste hacerlo. Eso, para mí, ya es SOMOS.</p>
-
-        <div style="margin:26px 0 0">
-          ${fila({ bg: 'rgba(255,122,69,0.16)', fg: '#ff9a6e' }, '&#9835;', 'Lo nuevo, antes que nadie', 'Estrenos y adelantos apenas estén listos, sin esperar al algoritmo.')}
-          ${fila({ bg: 'rgba(106,79,196,0.20)', fg: '#b09eea' }, '&#9679;', 'Fechas y shows', 'Te aviso primero si toco cerca de ti.')}
-          ${fila({ bg: 'rgba(0,180,216,0.16)', fg: '#00c2ea' }, '&#9825;', 'Lo que no sale en Instagram', 'Detrás de cámara, ideas a medio hacer, lo real.')}
-        </div>
-
-        <div style="margin:26px 0 0">
-          <a href="https://www.ser-music.com/ciclos" style="display:block;padding:14px 17px;border-radius:14px;text-decoration:none;font-size:14.5px;font-weight:bold;background:#00B4D8;color:#04222a;margin-bottom:9px">Escuchar CICLOS &#8594;</a>
-          <a href="https://www.instagram.com/unsergioromero" style="display:block;padding:14px 17px;border-radius:14px;text-decoration:none;font-size:14.5px;font-weight:bold;background:#161616;color:#ffffff;border:1px solid rgba(255,255,255,0.1)">Seguir en Instagram &#8594;</a>
-        </div>
-
-        <p style="margin:30px 0 0;font-size:15px;line-height:1.6;color:rgba(245,243,239,0.86)">Nos vemos por ahí.<br><b style="color:#ffffff">— Sergio</b> (SER)</p>
-
-        <p style="margin:18px 0 0;padding:13px 15px;border-left:2px solid #ff7a45;font-size:12.5px;line-height:1.55;color:rgba(245,243,239,0.62);background:rgba(255,122,69,0.06);border-radius:0 10px 10px 0">P.D. — si me quieres contar desde dónde escuchas esto, solo responde este correo. Lo leo todo.</p>
-      </div>
-
-      <div style="padding:18px 28px 26px;border-top:1px solid rgba(255,255,255,0.07);font-size:11px;letter-spacing:0.03em;color:rgba(245,243,239,0.32);text-align:center">
-        Recibes esto porque te uniste a SOMOS en <a href="https://www.ser-music.com" style="color:rgba(245,243,239,0.5);text-decoration:none">ser-music.com</a>
-      </div>
-    </div>
-  </div>`;
+  return `<!DOCTYPE html>
+<html lang="es" xmlns:v="urn:schemas-microsoft-com:vml" xmlns:o="urn:schemas-microsoft-com:office:office">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="color-scheme" content="dark light" />
+<meta name="supported-color-schemes" content="dark light" />
+<title>Ya eres de la Cuadra</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet" />
+<!--[if mso]>
+<noscript>
+<xml><o:OfficeDocumentSettings><o:PixelsPerInch>96</o:PixelsPerInch></o:OfficeDocumentSettings></xml>
+</noscript>
+<![endif]-->
+<style>
+  body,table,td{margin:0;padding:0}
+  body{background:${NEGRO} !important}
+  a{color:#5B84C4;text-decoration:none}
+  a:hover{color:${HUESO}}
+  @media (prefers-color-scheme: dark){
+    .bg-page,.bg-header,.bg-body{background-color:${NEGRO} !important}
+  }
+</style>
+</head>
+<body style="margin:0;padding:0;background:${NEGRO}">
+<!--[if mso]>
+<table role="presentation" width="640" align="center" cellpadding="0" cellspacing="0" border="0"><tr><td>
+<![endif]-->
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" class="bg-page" style="background:${NEGRO}">
+  <tr>
+    <td align="center" style="padding:60px 20px">
+      <table role="presentation" width="640" cellpadding="0" cellspacing="0" border="0" style="max-width:640px;width:100%;border-radius:10px;overflow:hidden">
+        <tr>
+          <td class="bg-header" style="background:${PANEL};padding:20px 28px;font-family:${FONT_MONO};font-size:13px;color:${GRIS}">
+            <div><strong style="color:${HUESO}">De:</strong> SOMOS &lt;hola@ser-music.com&gt;</div>
+            <div style="margin-top:4px"><strong style="color:${HUESO}">Asunto:</strong> Ya eres de la Cuadra</div>
+          </td>
+        </tr>
+        <tr>
+          <td class="bg-body" style="background:${NEGRO};padding:48px 40px;font-family:${FONT_BODY}">
+            <div style="font-family:${FONT_DISPLAY};font-size:30px;margin-bottom:24px;color:${HUESO}">SOMOS</div>
+            ${p('Ey,', 18)}
+            ${p('acabas de dejar tu correo, y eso ya te mete en la Cuadra. No hay carnet, no hay bienvenida formal — solo esto.', 18)}
+            ${p(`Empecé de niño, a los 14 años en Guatire, aprendiendo batería — subiendo a Caracas cada jueves por la tarde a clase. Años después subí a un escenario con banda, y dije algo sin pensarlo: <span style="color:${ROSA};font-weight:600">yo soy SER, pero juntos SOMOS</span>. Desde entonces no toco para nadie — toco con la Cuadra.`, 18)}
+            ${p('Te vas a enterar primero de cada Noche SOMOS antes que nadie. Y cuando vengas por primera vez, te va a tocar tu sello.', 18)}
+            ${p('Nos vemos en la próxima.', 30)}
+            <p style="margin:0;font-family:${FONT_MONO};font-size:14px;color:${TURQUESA}">— SER</p>
+          </td>
+        </tr>
+      </table>
+    </td>
+  </tr>
+</table>
+<!--[if mso]>
+</td></tr></table>
+<![endif]-->
+</body>
+</html>`;
 }
 
 // Solo se envía la primera vez que alguien se suscribe, no en cada reintento
@@ -118,10 +141,10 @@ async function enviarBienvenida(email) {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        from: 'SER <hola@ser-music.com>',
+        from: 'SOMOS <hola@ser-music.com>',
         to: [email],
         reply_to: RESPONDER_A,
-        subject: 'Ya eres parte de esto 🌊',
+        subject: 'Ya eres de la Cuadra',
         html: correoBienvenida(email),
       }),
     });
