@@ -1,0 +1,782 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="robots" content="noindex, nofollow" />
+  <title>Convocatorias · SER</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <style>
+    :root {
+      --bg: #0d0803;
+      --surface: #1a1007;
+      --border: #2e1c08;
+      --accent: #c8841a;
+      --accent-dim: #7a4f10;
+      --text: #e8d5b0;
+      --muted: #7a6040;
+      --danger: #c84a1a;
+      --success: #3a7a2a;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Inter', sans-serif;
+      font-size: 14px;
+      min-height: 100vh;
+    }
+
+    /* Auth screen */
+    #auth-screen {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      gap: 24px;
+      padding: 24px;
+    }
+    #auth-screen h1 { font-family: 'Bebas Neue', sans-serif; font-size: 48px; letter-spacing: 4px; color: var(--accent); }
+    #auth-screen p { color: var(--muted); text-align: center; }
+    .auth-form { display: flex; flex-direction: column; gap: 12px; width: 100%; max-width: 320px; }
+    .auth-form input {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      color: var(--text);
+      padding: 12px 16px;
+      border-radius: 10px;
+      font-size: 14px;
+      outline: none;
+    }
+    .auth-form input:focus { border-color: var(--accent); }
+    .btn {
+      background: var(--accent);
+      color: #0d0803;
+      font-weight: 600;
+      font-size: 14px;
+      padding: 12px 20px;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: opacity 0.15s;
+    }
+    .btn:hover { opacity: 0.85; }
+    .btn:disabled { opacity: 0.4; cursor: not-allowed; }
+    .btn-ghost { background: transparent; color: var(--muted); border: 1px solid var(--border); }
+    .btn-ghost:hover { border-color: var(--accent); color: var(--accent); opacity: 1; }
+
+    /* App */
+    #app { display: none; flex-direction: column; min-height: 100vh; }
+    #app.visible { display: flex; }
+
+    header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 16px 24px;
+      border-bottom: 1px solid var(--border);
+      position: sticky;
+      top: 0;
+      background: var(--bg);
+      z-index: 100;
+    }
+    header h1 { font-family: 'Bebas Neue', sans-serif; font-size: 28px; letter-spacing: 3px; color: var(--accent); }
+    header .header-right { display: flex; align-items: center; gap: 12px; }
+
+    /* Nav tabs */
+    nav {
+      display: flex;
+      gap: 4px;
+      padding: 12px 24px;
+      border-bottom: 1px solid var(--border);
+      overflow-x: auto;
+    }
+    .tab {
+      padding: 8px 16px;
+      border-radius: 8px;
+      border: none;
+      background: transparent;
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 500;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: all 0.15s;
+    }
+    .tab:hover { color: var(--text); background: var(--surface); }
+    .tab.active { background: var(--accent); color: #0d0803; font-weight: 600; }
+    .tab .badge {
+      display: inline-block;
+      background: var(--danger);
+      color: white;
+      font-size: 11px;
+      font-weight: 700;
+      padding: 1px 6px;
+      border-radius: 10px;
+      margin-left: 6px;
+    }
+    .tab.active .badge { background: rgba(0,0,0,0.3); }
+
+    main { flex: 1; padding: 24px; max-width: 1100px; width: 100%; margin: 0 auto; }
+
+    /* View panels */
+    .view { display: none; flex-direction: column; gap: 16px; }
+    .view.active { display: flex; }
+
+    /* Urgency banner */
+    .urgency-banner {
+      background: rgba(200, 74, 26, 0.12);
+      border: 1px solid var(--danger);
+      border-radius: 12px;
+      padding: 12px 16px;
+      font-size: 13px;
+      color: #e87050;
+    }
+
+    /* Cards */
+    .convocatoria-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 16px 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      cursor: pointer;
+      transition: border-color 0.15s;
+    }
+    .convocatoria-card:hover { border-color: var(--accent-dim); }
+    .convocatoria-card.urgent { border-color: var(--danger); }
+    .card-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; }
+    .card-nombre { font-weight: 600; font-size: 15px; color: var(--text); }
+    .card-organismo { font-size: 12px; color: var(--muted); margin-top: 2px; }
+    .card-meta { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+    .tag {
+      font-size: 11px;
+      font-weight: 600;
+      padding: 3px 8px;
+      border-radius: 6px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .tag-europeo { background: #1a2a4a; color: #6090e0; }
+    .tag-estatal  { background: #2a1a1a; color: #c06040; }
+    .tag-catalunya { background: #1a2a1a; color: #60a060; }
+    .tag-barcelona { background: #2a2a1a; color: #c0a040; }
+    .tag-otro { background: var(--border); color: var(--muted); }
+
+    .estado-badge {
+      font-size: 11px;
+      font-weight: 600;
+      padding: 3px 8px;
+      border-radius: 6px;
+      text-transform: uppercase;
+      letter-spacing: 0.3px;
+    }
+    .estado-detectada   { background: #1a1a2a; color: #8080c0; }
+    .estado-cribada     { background: #2a2a1a; color: #c0b040; }
+    .estado-descartada  { background: #1a1a1a; color: #505050; }
+    .estado-en_redaccion { background: #1a2a2a; color: #40a0a0; }
+    .estado-enviada     { background: #1a2a1a; color: #40a060; }
+    .estado-requerimiento { background: #2a1a1a; color: #c06040; }
+    .estado-concedida   { background: #1a2a1a; color: #60c060; }
+    .estado-denegada    { background: #1a1a1a; color: #505050; }
+
+    .fecha-limite {
+      font-size: 12px;
+      font-weight: 600;
+    }
+    .fecha-urgente { color: #e87050; }
+    .fecha-proxima { color: #c8a040; }
+    .fecha-normal  { color: var(--muted); }
+
+    .importe { font-size: 13px; color: var(--accent); font-weight: 600; }
+    .proxima-accion {
+      font-size: 12px;
+      color: var(--muted);
+      padding: 6px 10px;
+      background: rgba(255,255,255,0.03);
+      border-radius: 6px;
+      border-left: 2px solid var(--accent-dim);
+    }
+
+    /* Empty state */
+    .empty { color: var(--muted); text-align: center; padding: 48px; }
+
+    /* Modal */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.7);
+      z-index: 500;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+    }
+    .modal-overlay.open { display: flex; }
+    .modal {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 28px;
+      width: 100%;
+      max-width: 560px;
+      max-height: 90vh;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+    .modal h2 { font-family: 'Bebas Neue', sans-serif; font-size: 28px; letter-spacing: 2px; color: var(--accent); }
+    .field { display: flex; flex-direction: column; gap: 6px; }
+    .field label { font-size: 12px; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: 0.5px; }
+    .field input, .field select, .field textarea {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      color: var(--text);
+      padding: 10px 14px;
+      border-radius: 8px;
+      font-size: 14px;
+      font-family: 'Inter', sans-serif;
+      outline: none;
+      width: 100%;
+    }
+    .field input:focus, .field select:focus, .field textarea:focus { border-color: var(--accent); }
+    .field textarea { resize: vertical; min-height: 80px; }
+    .field select option { background: var(--surface); }
+    .modal-actions { display: flex; gap: 10px; justify-content: flex-end; margin-top: 8px; }
+
+    /* Docs view */
+    .doc-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 14px 18px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+    .doc-card.caducado { border-color: var(--danger); }
+    .doc-nombre { font-weight: 500; }
+    .doc-meta { font-size: 12px; color: var(--muted); margin-top: 2px; }
+    .doc-caducidad { font-size: 12px; color: var(--danger); font-weight: 600; }
+
+    /* Historico totals */
+    .totals-bar {
+      display: flex;
+      gap: 16px;
+      flex-wrap: wrap;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 14px 18px;
+    }
+    .total-item { display: flex; flex-direction: column; gap: 2px; }
+    .total-label { font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.5px; }
+    .total-value { font-size: 18px; font-weight: 700; color: var(--accent); }
+
+    #toast {
+      position: fixed;
+      bottom: 24px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: var(--accent);
+      color: #0d0803;
+      font-weight: 600;
+      font-size: 13px;
+      padding: 10px 20px;
+      border-radius: 10px;
+      z-index: 1000;
+      display: none;
+    }
+
+    @media (max-width: 600px) {
+      main { padding: 16px; }
+      header { padding: 12px 16px; }
+      nav { padding: 8px 16px; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- Auth screen -->
+<div id="auth-screen">
+  <h1>CONVOCATORIAS</h1>
+  <p>Panel privado de gestión · SER</p>
+  <div class="auth-form" id="login-form">
+    <input type="email" id="email-input" placeholder="tu@email.com" />
+    <button class="btn" id="send-magic-link">Entrar con magic link</button>
+    <p id="auth-msg" style="font-size:12px;color:var(--muted);text-align:center;"></p>
+  </div>
+</div>
+
+<!-- App -->
+<div id="app">
+  <header>
+    <h1>CONVOCATORIAS · SER</h1>
+    <div class="header-right">
+      <button class="btn btn-ghost" id="nueva-btn" style="font-size:13px;padding:8px 14px;">+ Nueva</button>
+      <button class="btn btn-ghost" id="signout-btn" style="font-size:12px;padding:8px 14px;">Salir</button>
+    </div>
+  </header>
+
+  <nav>
+    <button class="tab active" data-view="cierra">Cierra pronto <span class="badge" id="badge-urgentes" style="display:none"></span></button>
+    <button class="tab" data-view="en-curso">En curso</button>
+    <button class="tab" data-view="historico">Histórico</button>
+    <button class="tab" data-view="documentos">Documentos</button>
+  </nav>
+
+  <main>
+    <!-- CIERRA PRONTO -->
+    <div class="view active" id="view-cierra">
+      <div id="urgency-banner" class="urgency-banner" style="display:none"></div>
+      <div id="list-cierra"></div>
+    </div>
+
+    <!-- EN CURSO -->
+    <div class="view" id="view-en-curso">
+      <div id="list-en-curso"></div>
+    </div>
+
+    <!-- HISTÓRICO -->
+    <div class="view" id="view-historico">
+      <div class="totals-bar" id="totals-bar" style="display:none">
+        <div class="total-item"><span class="total-label">Total solicitado</span><span class="total-value" id="total-solicitado">—</span></div>
+        <div class="total-item"><span class="total-label">Concedido</span><span class="total-value" id="total-concedido">—</span></div>
+        <div class="total-item"><span class="total-label">Concedidas</span><span class="total-value" id="count-concedidas">—</span></div>
+        <div class="total-item"><span class="total-label">Denegadas</span><span class="total-value" id="count-denegadas">—</span></div>
+      </div>
+      <div id="list-historico"></div>
+    </div>
+
+    <!-- DOCUMENTOS -->
+    <div class="view" id="view-documentos">
+      <div style="display:flex;justify-content:flex-end;">
+        <button class="btn" id="nuevo-doc-btn" style="font-size:13px;padding:8px 16px;">+ Documento</button>
+      </div>
+      <div id="list-documentos"></div>
+    </div>
+  </main>
+</div>
+
+<!-- Modal convocatoria -->
+<div class="modal-overlay" id="modal-conv">
+  <div class="modal">
+    <h2 id="modal-title">Nueva convocatoria</h2>
+    <input type="hidden" id="conv-id" />
+    <div class="field"><label>Nombre</label><input id="conv-nombre" placeholder="Ej: INAEM Música 2027" /></div>
+    <div class="field"><label>Organismo</label><input id="conv-organismo" placeholder="Ej: INAEM" /></div>
+    <div class="field">
+      <label>Ámbito</label>
+      <select id="conv-ambito">
+        <option value="europeo">Europeo</option>
+        <option value="estatal">Estatal</option>
+        <option value="catalunya">Catalunya</option>
+        <option value="barcelona">Barcelona</option>
+        <option value="otro">Otro</option>
+      </select>
+    </div>
+    <div class="field"><label>URL oficial</label><input id="conv-url" placeholder="https://..." /></div>
+    <div class="field"><label>Objeto (breve)</label><input id="conv-objeto" placeholder="Ej: Ayuda a la producción discográfica" /></div>
+    <div class="field"><label>Importe máximo (€)</label><input type="number" id="conv-importe-max" /></div>
+    <div class="field"><label>Importe solicitado (€)</label><input type="number" id="conv-importe-sol" /></div>
+    <div class="field"><label>Fecha límite</label><input type="datetime-local" id="conv-fecha" /></div>
+    <div class="field">
+      <label>Estado</label>
+      <select id="conv-estado">
+        <option value="detectada">Detectada</option>
+        <option value="cribada">Cribada</option>
+        <option value="descartada">Descartada</option>
+        <option value="en_redaccion">En redacción</option>
+        <option value="enviada">Enviada</option>
+        <option value="requerimiento">Requerimiento</option>
+        <option value="concedida">Concedida</option>
+        <option value="denegada">Denegada</option>
+      </select>
+    </div>
+    <div class="field"><label>Próxima acción</label><input id="conv-prox-accion" placeholder="Ej: Obtener certificado AEAT" /></div>
+    <div class="field"><label>Fecha próxima acción</label><input type="date" id="conv-prox-fecha" /></div>
+    <div class="field"><label>Notas</label><textarea id="conv-notas" placeholder="Observaciones, nº de expediente..."></textarea></div>
+    <div class="modal-actions">
+      <button class="btn btn-ghost" onclick="closeModal()">Cancelar</button>
+      <button class="btn" id="save-conv-btn">Guardar</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal documento -->
+<div class="modal-overlay" id="modal-doc">
+  <div class="modal">
+    <h2>Documento</h2>
+    <input type="hidden" id="doc-id" />
+    <div class="field"><label>Nombre</label><input id="doc-nombre" placeholder="Ej: Certificado AEAT" /></div>
+    <div class="field">
+      <label>Tipo</label>
+      <select id="doc-tipo">
+        <option value="certificado">Certificado</option>
+        <option value="memoria">Memoria</option>
+        <option value="presupuesto">Presupuesto</option>
+        <option value="cv">CV artístico</option>
+        <option value="epk">EPK/Dossier</option>
+        <option value="otro">Otro</option>
+      </select>
+    </div>
+    <div class="field"><label>URL en Drive</label><input id="doc-url" placeholder="https://drive.google.com/..." /></div>
+    <div class="field"><label>Fecha de emisión</label><input type="date" id="doc-emision" /></div>
+    <div class="field"><label>Fecha de caducidad</label><input type="date" id="doc-caducidad" /></div>
+    <div class="field"><label>Notas</label><textarea id="doc-notas"></textarea></div>
+    <div class="modal-actions">
+      <button class="btn btn-ghost" onclick="closeDocModal()">Cancelar</button>
+      <button class="btn" id="save-doc-btn">Guardar</button>
+    </div>
+  </div>
+</div>
+
+<div id="toast"></div>
+
+<script>
+const SUPABASE_URL = 'https://hfhhgjewcdcjlmojihwd.supabase.co';
+const SUPABASE_ANON_KEY = 'SUPABASE_ANON_KEY_PLACEHOLDER';
+
+const { createClient } = supabase;
+const sb = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+// ── Auth ──────────────────────────────────────────────────────────
+async function checkSession() {
+  const { data: { session } } = await sb.auth.getSession();
+  if (session) showApp();
+}
+
+sb.auth.onAuthStateChange((_event, session) => {
+  if (session) showApp();
+  else showAuth();
+});
+
+document.getElementById('send-magic-link').addEventListener('click', async () => {
+  const email = document.getElementById('email-input').value.trim();
+  if (!email) return;
+  const btn = document.getElementById('send-magic-link');
+  btn.disabled = true;
+  const { error } = await sb.auth.signInWithOtp({ email, options: { emailRedirectTo: window.location.href } });
+  const msg = document.getElementById('auth-msg');
+  if (error) { msg.textContent = 'Error: ' + error.message; btn.disabled = false; }
+  else msg.textContent = '✓ Revisa tu correo — te mandamos el enlace.';
+});
+
+document.getElementById('signout-btn').addEventListener('click', async () => {
+  await sb.auth.signOut();
+});
+
+function showApp() {
+  document.getElementById('auth-screen').style.display = 'none';
+  document.getElementById('app').classList.add('visible');
+  loadAll();
+}
+function showAuth() {
+  document.getElementById('auth-screen').style.display = 'flex';
+  document.getElementById('app').classList.remove('visible');
+}
+
+// ── Tabs ─────────────────────────────────────────────────────────
+document.querySelectorAll('.tab').forEach(tab => {
+  tab.addEventListener('click', () => {
+    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+    tab.classList.add('active');
+    document.getElementById('view-' + tab.dataset.view).classList.add('active');
+  });
+});
+
+// ── Data loading ──────────────────────────────────────────────────
+async function loadAll() {
+  await Promise.all([loadCierra(), loadEnCurso(), loadHistorico(), loadDocumentos()]);
+}
+
+function daysUntil(dateStr) {
+  if (!dateStr) return null;
+  const diff = new Date(dateStr) - new Date();
+  return Math.ceil(diff / (1000 * 60 * 60 * 24));
+}
+
+function fmtDate(dateStr) {
+  if (!dateStr) return '—';
+  return new Date(dateStr).toLocaleDateString('es-ES', { day: 'numeric', month: 'short', year: 'numeric' });
+}
+
+function fmtImporte(n) {
+  if (!n) return null;
+  return new Intl.NumberFormat('es-ES', { style: 'currency', currency: 'EUR', maximumFractionDigits: 0 }).format(n);
+}
+
+function estadoBadge(estado) {
+  return `<span class="estado-badge estado-${estado}">${estado.replace('_', ' ')}</span>`;
+}
+
+function ambitTag(ambito) {
+  return `<span class="tag tag-${ambito}">${ambito}</span>`;
+}
+
+function fechaClass(days) {
+  if (days === null) return '';
+  if (days <= 7) return 'fecha-urgente';
+  if (days <= 14) return 'fecha-proxima';
+  return 'fecha-normal';
+}
+
+function convCard(c, showDays = true) {
+  const days = daysUntil(c.fecha_limite);
+  const urgent = days !== null && days <= 7 && !['concedida','denegada','descartada'].includes(c.estado);
+  const daysLabel = days !== null
+    ? (days <= 0 ? 'CERRADA' : `en ${days}d — ${fmtDate(c.fecha_limite)}`)
+    : fmtDate(c.fecha_limite);
+
+  return `
+    <div class="convocatoria-card ${urgent ? 'urgent' : ''}" onclick="openConv('${c.id}')">
+      <div class="card-top">
+        <div>
+          <div class="card-nombre">${c.nombre}</div>
+          <div class="card-organismo">${c.organismo}</div>
+        </div>
+        <div style="display:flex;flex-direction:column;align-items:flex-end;gap:6px;flex-shrink:0">
+          ${estadoBadge(c.estado)}
+          ${c.fecha_limite && showDays ? `<span class="fecha-limite ${fechaClass(days)}">${daysLabel}</span>` : ''}
+        </div>
+      </div>
+      <div class="card-meta">
+        ${ambitTag(c.ambito || 'otro')}
+        ${c.importe_max ? `<span class="importe">Hasta ${fmtImporte(c.importe_max)}</span>` : ''}
+        ${c.objeto ? `<span style="color:var(--muted);font-size:12px">${c.objeto}</span>` : ''}
+      </div>
+      ${c.proxima_accion ? `<div class="proxima-accion">→ ${c.proxima_accion}${c.fecha_proxima_accion ? ` · ${fmtDate(c.fecha_proxima_accion)}` : ''}</div>` : ''}
+    </div>`;
+}
+
+async function loadCierra() {
+  const { data } = await sb.from('convocatorias')
+    .select('*')
+    .not('estado', 'in', '("concedida","denegada","descartada")')
+    .order('fecha_limite', { ascending: true, nullsFirst: false });
+
+  const upcoming = (data || []).filter(c => {
+    const d = daysUntil(c.fecha_limite);
+    return d !== null;
+  }).slice(0, 10);
+
+  const urgentes = upcoming.filter(c => daysUntil(c.fecha_limite) <= 14);
+
+  const banner = document.getElementById('urgency-banner');
+  const badge = document.getElementById('badge-urgentes');
+
+  if (urgentes.length > 0) {
+    banner.style.display = 'block';
+    banner.innerHTML = `⚠️ ${urgentes.length} convocatoria${urgentes.length > 1 ? 's cierran' : ' cierra'} en menos de 14 días`;
+    badge.style.display = 'inline-block';
+    badge.textContent = urgentes.length;
+  } else {
+    banner.style.display = 'none';
+    badge.style.display = 'none';
+  }
+
+  const el = document.getElementById('list-cierra');
+  if (!upcoming.length) { el.innerHTML = '<div class="empty">No hay convocatorias próximas con fecha límite.</div>'; return; }
+  el.innerHTML = upcoming.map(c => convCard(c, true)).join('');
+}
+
+async function loadEnCurso() {
+  const { data } = await sb.from('convocatorias')
+    .select('*')
+    .in('estado', ['en_redaccion', 'enviada', 'requerimiento'])
+    .order('fecha_proxima_accion', { ascending: true });
+
+  const el = document.getElementById('list-en-curso');
+  if (!data?.length) { el.innerHTML = '<div class="empty">No hay convocatorias en curso.</div>'; return; }
+  el.innerHTML = data.map(c => convCard(c, true)).join('');
+}
+
+async function loadHistorico() {
+  const { data } = await sb.from('convocatorias')
+    .select('*')
+    .in('estado', ['concedida', 'denegada', 'descartada', 'enviada'])
+    .order('created_at', { ascending: false });
+
+  const concedidas = (data || []).filter(c => c.estado === 'concedida');
+  const denegadas = (data || []).filter(c => c.estado === 'denegada');
+  const totalSol = (data || []).reduce((s, c) => s + (c.importe_solicitado || 0), 0);
+  const totalConc = concedidas.reduce((s, c) => s + (c.importe_solicitado || 0), 0);
+
+  const bar = document.getElementById('totals-bar');
+  if (data?.length) {
+    bar.style.display = 'flex';
+    document.getElementById('total-solicitado').textContent = totalSol ? fmtImporte(totalSol) : '—';
+    document.getElementById('total-concedido').textContent = totalConc ? fmtImporte(totalConc) : '—';
+    document.getElementById('count-concedidas').textContent = concedidas.length;
+    document.getElementById('count-denegadas').textContent = denegadas.length;
+  }
+
+  const el = document.getElementById('list-historico');
+  if (!data?.length) { el.innerHTML = '<div class="empty">Sin historial todavía.</div>'; return; }
+  el.innerHTML = data.map(c => convCard(c, false)).join('');
+}
+
+async function loadDocumentos() {
+  const { data } = await sb.from('documentos').select('*').order('fecha_caducidad', { ascending: true });
+  const today = new Date();
+
+  const el = document.getElementById('list-documentos');
+  if (!data?.length) { el.innerHTML = '<div class="empty">No hay documentos guardados.</div>'; return; }
+
+  el.innerHTML = data.map(d => {
+    const cad = d.fecha_caducidad ? new Date(d.fecha_caducidad) : null;
+    const vencido = cad && cad < today;
+    const proximoVencer = cad && !vencido && (cad - today) < 30 * 86400 * 1000;
+
+    return `<div class="doc-card ${vencido ? 'caducado' : ''}" onclick="openDoc('${d.id}')">
+      <div>
+        <div class="doc-nombre">${d.nombre}</div>
+        <div class="doc-meta">${d.tipo || ''} ${d.fecha_emision ? '· Emisión: ' + fmtDate(d.fecha_emision) : ''}</div>
+      </div>
+      <div style="text-align:right">
+        ${d.url_drive ? `<a href="${d.url_drive}" target="_blank" onclick="e=>e.stopPropagation()" style="font-size:12px;color:var(--accent)">Ver en Drive ↗</a><br/>` : ''}
+        ${cad ? `<span class="${vencido ? 'doc-caducidad' : proximoVencer ? 'fecha-proxima' : 'fecha-normal'}" style="font-size:12px">
+          ${vencido ? '⚠ Caducado' : 'Caduca'} ${fmtDate(d.fecha_caducidad)}
+        </span>` : ''}
+      </div>
+    </div>`;
+  }).join('');
+}
+
+// ── Modal convocatoria ────────────────────────────────────────────
+document.getElementById('nueva-btn').addEventListener('click', () => openModal());
+
+function openModal(conv = null) {
+  document.getElementById('modal-title').textContent = conv ? conv.nombre : 'Nueva convocatoria';
+  document.getElementById('conv-id').value = conv?.id || '';
+  document.getElementById('conv-nombre').value = conv?.nombre || '';
+  document.getElementById('conv-organismo').value = conv?.organismo || '';
+  document.getElementById('conv-ambito').value = conv?.ambito || 'estatal';
+  document.getElementById('conv-url').value = conv?.url || '';
+  document.getElementById('conv-objeto').value = conv?.objeto || '';
+  document.getElementById('conv-importe-max').value = conv?.importe_max || '';
+  document.getElementById('conv-importe-sol').value = conv?.importe_solicitado || '';
+  document.getElementById('conv-fecha').value = conv?.fecha_limite ? conv.fecha_limite.slice(0,16) : '';
+  document.getElementById('conv-estado').value = conv?.estado || 'detectada';
+  document.getElementById('conv-prox-accion').value = conv?.proxima_accion || '';
+  document.getElementById('conv-prox-fecha').value = conv?.fecha_proxima_accion || '';
+  document.getElementById('conv-notas').value = conv?.notas || '';
+  document.getElementById('modal-conv').classList.add('open');
+}
+
+async function openConv(id) {
+  const { data } = await sb.from('convocatorias').select('*').eq('id', id).single();
+  if (data) openModal(data);
+}
+
+function closeModal() {
+  document.getElementById('modal-conv').classList.remove('open');
+}
+
+document.getElementById('modal-conv').addEventListener('click', e => {
+  if (e.target === document.getElementById('modal-conv')) closeModal();
+});
+
+document.getElementById('save-conv-btn').addEventListener('click', async () => {
+  const id = document.getElementById('conv-id').value;
+  const payload = {
+    nombre: document.getElementById('conv-nombre').value.trim(),
+    organismo: document.getElementById('conv-organismo').value.trim(),
+    ambito: document.getElementById('conv-ambito').value,
+    url: document.getElementById('conv-url').value.trim() || null,
+    objeto: document.getElementById('conv-objeto').value.trim() || null,
+    importe_max: parseFloat(document.getElementById('conv-importe-max').value) || null,
+    importe_solicitado: parseFloat(document.getElementById('conv-importe-sol').value) || null,
+    fecha_limite: document.getElementById('conv-fecha').value || null,
+    estado: document.getElementById('conv-estado').value,
+    proxima_accion: document.getElementById('conv-prox-accion').value.trim() || null,
+    fecha_proxima_accion: document.getElementById('conv-prox-fecha').value || null,
+    notas: document.getElementById('conv-notas').value.trim() || null,
+    updated_at: new Date().toISOString(),
+  };
+
+  if (!payload.nombre || !payload.organismo) { toast('Nombre y organismo son obligatorios'); return; }
+
+  const { error } = id
+    ? await sb.from('convocatorias').update(payload).eq('id', id)
+    : await sb.from('convocatorias').insert(payload);
+
+  if (error) { toast('Error: ' + error.message); return; }
+  closeModal();
+  toast(id ? 'Guardado ✓' : 'Convocatoria creada ✓');
+  loadAll();
+});
+
+// ── Modal documento ───────────────────────────────────────────────
+document.getElementById('nuevo-doc-btn').addEventListener('click', () => openDocModal());
+
+function openDocModal(doc = null) {
+  document.getElementById('doc-id').value = doc?.id || '';
+  document.getElementById('doc-nombre').value = doc?.nombre || '';
+  document.getElementById('doc-tipo').value = doc?.tipo || 'certificado';
+  document.getElementById('doc-url').value = doc?.url_drive || '';
+  document.getElementById('doc-emision').value = doc?.fecha_emision || '';
+  document.getElementById('doc-caducidad').value = doc?.fecha_caducidad || '';
+  document.getElementById('doc-notas').value = doc?.notas || '';
+  document.getElementById('modal-doc').classList.add('open');
+}
+
+async function openDoc(id) {
+  const { data } = await sb.from('documentos').select('*').eq('id', id).single();
+  if (data) openDocModal(data);
+}
+
+function closeDocModal() {
+  document.getElementById('modal-doc').classList.remove('open');
+}
+
+document.getElementById('modal-doc').addEventListener('click', e => {
+  if (e.target === document.getElementById('modal-doc')) closeDocModal();
+});
+
+document.getElementById('save-doc-btn').addEventListener('click', async () => {
+  const id = document.getElementById('doc-id').value;
+  const payload = {
+    nombre: document.getElementById('doc-nombre').value.trim(),
+    tipo: document.getElementById('doc-tipo').value,
+    url_drive: document.getElementById('doc-url').value.trim() || null,
+    fecha_emision: document.getElementById('doc-emision').value || null,
+    fecha_caducidad: document.getElementById('doc-caducidad').value || null,
+    notas: document.getElementById('doc-notas').value.trim() || null,
+  };
+
+  if (!payload.nombre) { toast('El nombre es obligatorio'); return; }
+
+  const { error } = id
+    ? await sb.from('documentos').update(payload).eq('id', id)
+    : await sb.from('documentos').insert(payload);
+
+  if (error) { toast('Error: ' + error.message); return; }
+  closeDocModal();
+  toast(id ? 'Guardado ✓' : 'Documento añadido ✓');
+  loadDocumentos();
+});
+
+// ── Toast ─────────────────────────────────────────────────────────
+function toast(msg) {
+  const el = document.getElementById('toast');
+  el.textContent = msg;
+  el.style.display = 'block';
+  setTimeout(() => { el.style.display = 'none'; }, 3000);
+}
+
+// ── Init ──────────────────────────────────────────────────────────
+checkSession();
+</script>
+</body>
+</html>
