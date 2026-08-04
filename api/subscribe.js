@@ -47,7 +47,7 @@ async function avisarFormspree(email) {
 }
 
 // Diseño "Urbano" (handoff de diseño, agosto 2026): negro + acentos fríos,
-// narrativa de "la Cuadra". Construido con tablas y estilos inline porque
+// narrativa de "la banda". Construido con tablas y estilos inline porque
 // los clientes de correo (Outlook sobre todo) no soportan flexbox/grid —
 // el mockup original usaba CSS moderno, esto es la versión que sí funciona
 // en Gmail/Outlook/Apple Mail.
@@ -74,7 +74,7 @@ function correoBienvenida(email) {
 <meta http-equiv="X-UA-Compatible" content="IE=edge" />
 <meta name="color-scheme" content="dark light" />
 <meta name="supported-color-schemes" content="dark light" />
-<title>Ya eres de la Cuadra</title>
+<title>Ya eres de la banda</title>
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link href="https://fonts.googleapis.com/css2?family=Anton&family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet" />
 <!--[if mso]>
@@ -103,7 +103,7 @@ function correoBienvenida(email) {
         <tr>
           <td class="bg-header" style="background:${PANEL};padding:20px 28px;font-family:${FONT_MONO};font-size:13px;color:${GRIS}">
             <div><strong style="color:${HUESO}">De:</strong> SOMOS &lt;hola@ser-music.com&gt;</div>
-            <div style="margin-top:4px"><strong style="color:${HUESO}">Asunto:</strong> Ya eres de la Cuadra</div>
+            <div style="margin-top:4px"><strong style="color:${HUESO}">Asunto:</strong> Ya eres de la banda</div>
           </td>
         </tr>
         <tr>
@@ -111,9 +111,9 @@ function correoBienvenida(email) {
             <div style="font-family:${FONT_MONO};font-size:12px;letter-spacing:0.16em;color:${TURQUESA};margin-bottom:10px">SER PRESENTA</div>
             <div style="font-family:${FONT_DISPLAY};font-size:30px;margin-bottom:24px;color:${HUESO}">SOMOS</div>
             ${p('Ey,', 18)}
-            ${p('acabas de dejar tu correo, y eso ya te mete en la Cuadra. No hay carnet, no hay bienvenida formal — solo esto.', 18)}
-            ${p(`Empecé de niño, a los 14 años en Guatire, aprendiendo batería — subiendo a Caracas cada jueves por la tarde a clase. Años después subí a un escenario con banda, y dije algo sin pensarlo: <span style="color:${ROSA};font-weight:600">yo soy SER, pero juntos SOMOS</span>. Desde entonces no toco para nadie — toco con la Cuadra.`, 18)}
-            ${p('Te vas a enterar primero de cada Noche SOMOS antes que nadie. Y cuando vengas por primera vez, te va a tocar tu sello.', 18)}
+            ${p('Acabas de dejar tu correo. Si ya me viste tocar en vivo, seguro terminaste cantando con nosotros — y eso, técnicamente, ya te hace banda. Si todavía no has venido, esto es la fila de entrada. No hay carnet, no hay bienvenida formal — solo esto.', 18)}
+            ${p(`Soy de Venezuela. Empecé de niño, a los 14 años en Guatire, aprendiendo batería — subiendo a Caracas cada jueves por la tarde a clase. Años después subí a un escenario con banda, y dije algo sin pensarlo: <span style="color:${ROSA};font-weight:600">yo soy SER, pero juntos SOMOS</span>. Desde entonces no toco para nadie — toco con la banda.`, 18)}
+            ${p('Por aquí te vas a enterar de shows, canciones nuevas y lo que se nos vaya ocurriendo. Y si quieres opinar, proponer algo o meterte de lleno, este correo también sirve para eso — leo todo lo que me escriban.', 18)}
             ${p('Nos vemos en la próxima.', 30)}
             <p style="margin:0;font-family:${FONT_MONO};font-size:14px;color:${TURQUESA}">— SER</p>
           </td>
@@ -145,7 +145,7 @@ async function enviarBienvenida(email) {
         from: 'SOMOS <hola@ser-music.com>',
         to: [email],
         reply_to: RESPONDER_A,
-        subject: 'Ya eres de la Cuadra',
+        subject: 'Ya eres de la banda',
         html: correoBienvenida(email),
       }),
     });
