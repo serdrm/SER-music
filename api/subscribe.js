@@ -108,9 +108,8 @@ function correoBienvenida(email) {
         </tr>
         <tr>
           <td class="bg-body" style="background:${NEGRO};padding:48px 40px;font-family:${FONT_BODY}">
-            <div style="font-family:${FONT_DISPLAY};font-size:34px;color:${TURQUESA}">SER</div>
-            <div style="font-family:${FONT_MONO};font-size:12px;letter-spacing:0.1em;color:${GRIS};margin:4px 0 2px">presenta</div>
-            <div style="font-family:${FONT_DISPLAY};font-size:34px;margin-bottom:24px;color:${HUESO}">SOMOS</div>
+            <div style="font-family:${FONT_DISPLAY};font-size:34px;line-height:1.05;color:${TURQUESA}">SER</div>
+            <div style="font-family:${FONT_DISPLAY};font-size:34px;line-height:1.05;margin-bottom:24px;color:${HUESO}">SOMOS</div>
             ${p('Ey,', 18)}
             ${p('Acabas de dejar tu correo. Si ya me viste tocar en vivo, seguro terminaste cantando con nosotros — y eso, técnicamente, ya te hace banda. Si todavía no has venido, esto es la fila de entrada. No hay carnet, no hay bienvenida formal — solo esto.', 18)}
             ${p(`Soy de Venezuela. Empecé de niño, a los 14 años en Guatire, aprendiendo batería — subiendo a Caracas cada jueves por la tarde a clase. Años después subí a un escenario con banda, y dije algo sin pensarlo: <span style="color:${ROSA};font-weight:600">yo soy SER, pero juntos SOMOS</span>. Desde entonces no toco para nadie — toco con la banda.`, 18)}
