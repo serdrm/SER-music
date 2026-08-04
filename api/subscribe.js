@@ -108,14 +108,15 @@ function correoBienvenida(email) {
         </tr>
         <tr>
           <td class="bg-body" style="background:${NEGRO};padding:48px 40px;font-family:${FONT_BODY}">
-            <div style="font-family:${FONT_MONO};font-size:12px;letter-spacing:0.16em;color:${TURQUESA};margin-bottom:10px">SER PRESENTA</div>
-            <div style="font-family:${FONT_DISPLAY};font-size:30px;margin-bottom:24px;color:${HUESO}">SOMOS</div>
+            <div style="font-family:${FONT_DISPLAY};font-size:34px;color:${TURQUESA}">SER</div>
+            <div style="font-family:${FONT_MONO};font-size:12px;letter-spacing:0.1em;color:${GRIS};margin:4px 0 2px">presenta</div>
+            <div style="font-family:${FONT_DISPLAY};font-size:34px;margin-bottom:24px;color:${HUESO}">SOMOS</div>
             ${p('Ey,', 18)}
             ${p('Acabas de dejar tu correo. Si ya me viste tocar en vivo, seguro terminaste cantando con nosotros — y eso, técnicamente, ya te hace banda. Si todavía no has venido, esto es la fila de entrada. No hay carnet, no hay bienvenida formal — solo esto.', 18)}
             ${p(`Soy de Venezuela. Empecé de niño, a los 14 años en Guatire, aprendiendo batería — subiendo a Caracas cada jueves por la tarde a clase. Años después subí a un escenario con banda, y dije algo sin pensarlo: <span style="color:${ROSA};font-weight:600">yo soy SER, pero juntos SOMOS</span>. Desde entonces no toco para nadie — toco con la banda.`, 18)}
             ${p('Por aquí te vas a enterar de shows, canciones nuevas y lo que se nos vaya ocurriendo. Y si quieres opinar, proponer algo o meterte de lleno, este correo también sirve para eso — leo todo lo que me escriban.', 18)}
             ${p('Nos vemos en la próxima.', 14)}
-            <p style="margin:0;font-family:${FONT_DISPLAY};font-size:28px;letter-spacing:0.02em;color:${TURQUESA}">— SER</p>
+            <p style="margin:0;font-family:${FONT_DISPLAY};font-size:34px;letter-spacing:0.02em;color:${TURQUESA}">— SER</p>
           </td>
         </tr>
       </table>
