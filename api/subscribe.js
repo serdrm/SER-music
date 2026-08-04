@@ -108,6 +108,7 @@ function correoBienvenida(email) {
         </tr>
         <tr>
           <td class="bg-body" style="background:${NEGRO};padding:48px 40px;font-family:${FONT_BODY}">
+            <div style="font-family:${FONT_MONO};font-size:12px;letter-spacing:0.16em;color:${TURQUESA};margin-bottom:10px">SER PRESENTA</div>
             <div style="font-family:${FONT_DISPLAY};font-size:30px;margin-bottom:24px;color:${HUESO}">SOMOS</div>
             ${p('Ey,', 18)}
             ${p('acabas de dejar tu correo, y eso ya te mete en la Cuadra. No hay carnet, no hay bienvenida formal — solo esto.', 18)}
